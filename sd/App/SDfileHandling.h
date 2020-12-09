@@ -11,6 +11,7 @@
 #include "stm32f4xx_hal.h"
 
 #ifdef STM32F4xx_HAL_SD_H
+#include <stdio.h>
 #include "xprintf/App/xprintf.h"
 #include "ff.h"
 #include "ff_gen_drv.h"

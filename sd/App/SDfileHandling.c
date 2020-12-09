@@ -22,19 +22,19 @@ static uint16_t lenF;
 static uint16_t lenD;
 
 FRESULT initSDfileHandling() {
+	xprintf("Start initSDfileHandling\n");
 	FATFS_LinkDriver(&SD_Driver, SDPath);
+	xprintf("Link Sucessfull\n");
 
 	FRESULT fstate;
-	for (int i = 0; i < 1; i++) {
-		HAL_Delay(500);
-		fstate = f_mount(&fat, SDPath, 1);
-		xprintf("Mount with fstate: %d\n", fstate);
-		if (fstate == FR_OK)
-			break;
-	}
+	HAL_Delay(500);
+	fstate = f_mount(&fat, SDPath, 1);
+	xprintf("First mount with fstate: %d\n", fstate);
+
 	if (fstate == FR_OK) {
 		xprintf("Mount Started.\n");
 		char fileName[] = "init.txt";
+		f_close(&file);
 		fstate = f_open(&file, fileName, FA_WRITE | FA_CREATE_ALWAYS);
 		if (fstate == FR_OK) {
 			xprintf("File opened successfully.\n");
@@ -93,6 +93,7 @@ void packData(char *sendMsg, uint16_t data1, uint16_t data2) {
 }
 
 FRESULT SDFH_openFile(char* fileName) {
+	f_close(&file);
 	return f_open(&file, fileName, FA_WRITE | FA_CREATE_ALWAYS);
 }
 
