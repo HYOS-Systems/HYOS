@@ -42,7 +42,7 @@ int xatoi (char** str, long* res);
 #endif
 
 #ifdef __STM32F4xx_HAL_UART_H
-void initUART(UART_HandleTypeDef*);
+void initXprint(UART_HandleTypeDef*);
 #endif // __STM32F4xx_HAL_UART_H
 
 #endif

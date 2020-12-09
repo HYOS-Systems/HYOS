@@ -478,7 +478,7 @@ uint8_t uart_getc(void)
 	return d;
 }
 
-void initUART(UART_HandleTypeDef* huartPointer){
+void initXprint(UART_HandleTypeDef* huartPointer){
 	huartP = huartPointer;
 	xdev_in(uart_getc);
 	xdev_out(uart_putc);
