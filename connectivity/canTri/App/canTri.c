@@ -1,40 +1,15 @@
-/**
- ******************************************************************************
- * File Name          : CAN.c
- * Description        : This file provides code for the configuration
- *                      of the CAN instances.
- ******************************************************************************
- * @attention
+/*
+ * ccdh.c
  *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under BSD 3-Clause license,
- * the "License"; You may not use this file except in compliance with the
- * License. You may obtain a copy of the License at:
- *                        opensource.org/licenses/BSD-3-Clause
- *
- ******************************************************************************
+ *  Created on: Sep 12, 2021
+ *      Author: Bayram
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "canTri/App/canTri.h"
+#include <connectivity/canTri/App/canTri.h>
 
 /* Check if CAN is implemented -----------------------------------------------*/
-#ifdef STM32F4xx_HAL_CAN_H
-typedef struct {
-	uint8_t number;
-	CAN_TxHeaderTypeDef pTxHeader;
-	CAN_RxHeaderTypeDef pRxHeader;
-	uint32_t TxMailbox;
-	uint8_t a, r[8];
-	CAN_FilterTypeDef sFilterConfig;
-	CAN_HandleTypeDef* hcan;
-} CANBus;
-
-CANBus bus1;
-CANBus bus2;
-CANBus bus3;
+#ifdef INC_CANTRI_H_
 
 /* Init ------------------------------------------------------------------*/
 void CAN_Start(CANBus* bus) {
@@ -77,7 +52,9 @@ void setStandardHeader(CANBus* bus, uint32_t StdID) {
 void init_CAN(CAN_HandleTypeDef* canHandle, uint32_t StdID) {
 	if (canHandle->Instance == 0) {
 		xprintf("ERROR: Invalid CAN-Handle.\n");
-	} else if (canHandle->Instance == CAN1) {
+	}
+#ifdef CAN1
+	else if (canHandle->Instance == CAN1) {
 		bus1.hcan = canHandle;
 		bus1.number = 1;
 
@@ -86,7 +63,10 @@ void init_CAN(CAN_HandleTypeDef* canHandle, uint32_t StdID) {
 		CAN_Start(&bus1);
 
 		HAL_CAN_MspInit(bus1.hcan);
-	} else if (canHandle->Instance == CAN2) {
+	}
+#endif
+#ifdef CAN2
+	else if (canHandle->Instance == CAN2) {
 		bus2.hcan = canHandle;
 		bus2.number = 2;
 
@@ -95,7 +75,10 @@ void init_CAN(CAN_HandleTypeDef* canHandle, uint32_t StdID) {
 		CAN_Start(&bus2);
 
 		HAL_CAN_MspInit(bus2.hcan);
-	} else if (canHandle->Instance == CAN3) {
+		}
+#endif
+#ifdef CAN3
+	else if (canHandle->Instance == CAN3) {
 		bus3.hcan = canHandle;
 		bus3.number = 3;
 
@@ -105,6 +88,7 @@ void init_CAN(CAN_HandleTypeDef* canHandle, uint32_t StdID) {
 
 		HAL_CAN_MspInit(bus3.hcan);
 	}
+#endif
 }
 
 /* Settings ------------------------------------------------------------------*/
@@ -182,5 +166,5 @@ void CAN3_ReceiveMessage(unsigned char *message) {
 	CAN_ReceiveMessage(message, &bus3);
 }
 
-#endif // STM32F4xx_HAL_CAN_H
+#endif // INC_CANTRI_H_
 /****END OF FILE****/

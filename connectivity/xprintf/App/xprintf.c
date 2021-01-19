@@ -19,7 +19,7 @@
 /-------------------------------------------------------------------------*/
 
 
-#include "xprintf/App/xprintf.h"
+#include <connectivity/xprintf/App/xprintf.h>
 
 
 #if _USE_XFUNC_OUT
@@ -28,9 +28,9 @@ void (*xfunc_out)(unsigned char);	/* Pointer to the output stream */
 static char *outptr;
 
 /* Check if UART is implemented ----------------------------------------------*/
-#ifdef __STM32F4xx_HAL_UART_H
+#ifdef __STM32_UART_PERIPHERAL
 UART_HandleTypeDef* huartP;
-#endif // __STM32F4xx_HAL_UART_H
+#endif // __STM32_UART_PERIPHERAL
 
 /*----------------------------------------------*/
 /* Put a character                              */
@@ -465,7 +465,7 @@ int xatoi (			/* 0:Failed, 1:Successful */
 #endif /* _USE_XFUNC_IN */
 
 /* Check if UART is implemented ----------------------------------------------*/
-#ifdef __STM32F4xx_HAL_UART_H
+#ifdef __STM32_UART_PERIPHERAL
 void uart_putc(uint8_t d)
 {
 	HAL_UART_Transmit(huartP, &d, 1, 1000);
@@ -484,4 +484,4 @@ void initXprint(UART_HandleTypeDef* huartPointer){
 	xdev_out(uart_putc);
 }
 
-#endif //__STM32F4xx_HAL_UART_H
+#endif //__STM32_UART_PERIPHERAL

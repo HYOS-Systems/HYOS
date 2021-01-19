@@ -4,13 +4,16 @@
  *  Created on: 06.10.2020
  *      Author: Bayram
  */
+#pragma once
 
-#ifndef INC_DATAHANDLING_H_
-#define INC_DATAHANDLING_H_
+#include <hyendOS/OSVersioning/App/OSVersioning.h>
 
-#include "stm32f4xx_hal.h"
+#ifdef __STM32_SDIO_PERIPHERAL
 
-#ifdef STM32F4xx_HAL_SD_H
+#ifndef INC_FILEHANDLING_H_
+#define INC_FILEHANDLING_H_
+#endif /* INC_FILEHANDLING_H_ */
+
 #include <stdio.h>
 #include "xprintf/App/xprintf.h"
 #include "ff.h"
@@ -46,6 +49,5 @@ void SDFH_writeTest(void);
 
 void SDFH_normalOperation(void);
 
-#endif // STM32F4xx_HAL_SD_H
+#endif // __STM32_SDIO_PERIPHERAL
 
-#endif /* INC_DATAHANDLING_H_ */

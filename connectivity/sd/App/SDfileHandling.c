@@ -5,8 +5,10 @@
  *      Author: Bayram
  */
 
-#include "sd/App/SDfileHandling.h"
-#ifdef STM32F4xx_HAL_SD_H
+#include <connectivity/sd/App/SDfileHandling.h>
+
+// Check for valid Initialization
+#ifdef INC_DATAHANDLING_H_
 
 // FileData
 FATFS fat = { 0 };
@@ -24,7 +26,7 @@ static uint16_t lenD;
 FRESULT initSDfileHandling() {
 	xprintf("Start initSDfileHandling\n");
 	FATFS_LinkDriver(&SD_Driver, SDPath);
-	xprintf("Link Sucessfull\n");
+	xprintf("Link Successfull\n");
 
 	FRESULT fstate;
 	HAL_Delay(500);
@@ -77,7 +79,7 @@ void getFileNameLength(uint16_t *len, uint16_t sec) {
 }
 
 void getFileName(char *sendMsg, uint16_t sec) {
-	sprintf(sendMsg, "Data_%d.bin", sec);
+	sprintf(sendMsg, "%d.txt", sec);
 }
 
 void getDataLength(uint16_t *len, uint16_t data1, uint16_t data2) {
@@ -157,4 +159,4 @@ void SDFH_normalOperation() {
 	}
 }
 
-#endif // STM32F4xx_HAL_SD_H
+#endif // INC_DATAHANDLING_H_

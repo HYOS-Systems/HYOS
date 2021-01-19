@@ -2,11 +2,12 @@
 /* Universal string handler for user console interface  (C)ChaN, 2012     */
 /*------------------------------------------------------------------------*/
 
+#pragma once
 
 #ifndef _STRFUNC
 #define _STRFUNC
 
-#include "stm32f4xx_hal.h"
+#include <hyendOS/OSVersioning/App/OSVersioning.h>
 
 #define _USE_XFUNC_OUT	1	/* 1: Use output functions */
 #define	_CR_CRLF		1	/* 1: Convert \n ==> \r\n in the output char */
@@ -41,8 +42,8 @@ int xfgets (unsigned char (*func)(void), char* buff, int len);
 int xatoi (char** str, long* res);
 #endif
 
-#ifdef __STM32F4xx_HAL_UART_H
+#ifdef __STM32_UART_PERIPHERAL
 void initXprint(UART_HandleTypeDef*);
-#endif // __STM32F4xx_HAL_UART_H
+#endif //__STM32_UART_PERIPHERAL
 
 #endif
