@@ -1,4 +1,6 @@
-Barry's Labraries for easy interfacing with STM32F4xx.
+// ----------------------------------------------------------------------------------------------------------------------------------------------------
+HyEnD-OS for easy interfacing with STM32.
+
 How To Use:
 0. Generated your eclipse-project with CubeMX and open it. Proceed in eclipse:
 1. Rightclick your Project and go to Properties
@@ -11,8 +13,13 @@ How To Use:
 		1. Navigate to "Source Location"
 		2. Click "Link Filder..." and add this Lib-Folder
 4. Rebuild your Project to refresh Includes and Sources
+5. #include <OSUserInclude.h> in your main and whererver else needed
+
+Note:
+Currently support for STM32F1xx and STM32F4xx.
 
 
+// ----------------------------------------------------------------------------------------------------------------------------------------------------
 Usefull stuff around Code Generation with CubeMX
 
 - Clean Project Generation with CubeMX (!)
