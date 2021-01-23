@@ -1,7 +1,6 @@
-// ----------------------------------------------------------------------------------------------------------------------------
-HyEnD-OS for easy interfacing with STM32.
+# HyEnD-OS for easy interfacing with STM32
 
-How To Use:
+## How To Use:
 0. Generated your eclipse-project with CubeMX and open it. Proceed in eclipse:
 1. Rightclick your Project and go to Properties
 2. Navigate to "C/C++ General - Paths and Symbols"
@@ -11,16 +10,15 @@ How To Use:
 		2. Click "Add..." and add this Lib-Folder
 	- Sources
 		1. Navigate to "Source Location"
-		2. Click "Link Filder..." and add this Lib-Folder
+		2. Click "Link Folder..." and add this Lib-Folder
 4. Rebuild your Project to refresh Includes and Sources
-5. #include <OSUserInclude.h> in your main and whererver else needed
+5. `#include <OSUserInclude.h>` in your main and whererver else needed
 
-Note:
+## Note:
 Currently support for STM32F1xx and STM32F4xx.
 
 
-// ----------------------------------------------------------------------------------------------------------------------------
-Usefull stuff around Code Generation with CubeMX
+# Usefull stuff around Code Generation with CubeMX
 
 - Clean Project Generation with CubeMX (!)
 	- Before generating every code you should (for clean code-generation) follow this easy trick
@@ -30,10 +28,12 @@ Usefull stuff around Code Generation with CubeMX
 
 - UserCode
 	- After every re-generation of code by CubeMX your UserCode can be deleted. But your Code will be kept if it is between the comments:
+	```
 	/* USER CODE BEGIN someSpaceNr # */
 	// All Code and Comments in here will be kept.
 	/* USER CODE END someSpaceNr # */
-	This comments are distributed unintuitively, sometimes. Keep your eyes open. Especially for User-Includes and in the main-while(true)-loop.
+	```
+	This comments are distributed unintuitively, sometimes. Keep your eyes open. Especially for User-Includes and in the main-`while(true)`-loop.
 	
 
 - NVIC Pitfalls
