@@ -40,3 +40,4 @@ Currently support for STM32F1xx and STM32F4xx.
 	- If you want to use an Interrupt cause another interrupt (e.g. BlueButton Interrupt to Send CAN Message and receive Message via CAN RX interrupt),
 	make sure that the priority of the initial causing (BlueButton) interrupt is higher or same than the caused (CAN RX) interrupts.
 	Otherwise the CAN RX interrupt will interrupt the sending process caused by the BlueButton interrupt (for instance).
+	- I generally advice to not set any NVIC priority to the highest level (0) unless you really know what your are doing. As timers are also interrupt based your HAL Delay will stop counting, while an NVIC treatment with priotity 0 is executed. This implys that HAL Delay becomes an infinite loop whithin the NVIC treatment.
