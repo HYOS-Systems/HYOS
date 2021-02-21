@@ -10,8 +10,8 @@
 	2. Navigate to "C/C++ General - Paths and Symbols" and click the "Source Location" Tab
 	3. Click "Link Folder..." and tick the "Link to folder in the file system" box
 	4. Type a meaningful "Folder Name", like "HyEnD_Lib"
-	5. Hit the "Variables..." button and select the "PROJECT_LOC" for the path to your project or "PARENT_LOC" for the path to your workspace
-	6. Now type the relative path to the Lib folder of this project. It could look like this: PROJECT_LOC/../../Lib
+	5. Hit the "Variables..." button and select the "PROJECT_LOC" for the path to your project or "PARENT_LOC" for the path to your workspace, hit "OK"
+	6. Now, after the "PROJECT_LOC" or "PARENT_LOC", add the relative path to the Lib folder of this project. It could look like this: PROJECT_LOC/../../Lib
 	7. Hit "OK" and then "Apply and Close"; rebuild your project
 	
 2. Confirm if Lib Folder is added
