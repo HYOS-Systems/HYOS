@@ -1,27 +1,34 @@
-/* Define to prevent recursive inclusion -------------------------------------*/
+/*
+ * canTri.h
+ *
+ * Ensures that CANBus struct is available even with no definedn CAN Preipheral.
+ */
 #pragma once
 
-#include <hyendOS/OSVersioning/App/OSVersioning.h>
-/* Check if CAN is implemented -----------------------------------------------*/
+#include "hyendOS/OSVersioning/App/OSVersioning.h"
+
 #ifdef __STM32_CAN_PERIPHERAL
 
-// Define valid Initialization
 #define INC_CANTRI_H_
 
-/* Includes ------------------------------------------------------------------*/
 #include "can.h"
-#include <connectivity/xprintf/App/xprintf.h>
+#include "connectivity/xprintf/App/xprintf.h"
+
+#endif
 
 typedef struct {
 	uint8_t number;
+#ifdef INC_CANTRI_H_
 	CAN_TxHeaderTypeDef pTxHeader;
 	CAN_RxHeaderTypeDef pRxHeader;
 	uint32_t TxMailbox;
 	uint8_t a, r[8];
 	CAN_FilterTypeDef sFilterConfig;
 	CAN_HandleTypeDef* hcan;
+#endif
 } CANBus;
 
+#ifdef INC_CANTRI_H_
 CANBus bus1;
 CANBus bus2;
 CANBus bus3;

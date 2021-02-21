@@ -6,7 +6,7 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include <connectivity/canTri/App/canTri.h>
+#include "connectivity/canTri/App/canTri.h"
 
 /* Check if CAN is implemented -----------------------------------------------*/
 #ifdef INC_CANTRI_H_

@@ -5,7 +5,7 @@
  *      Author: Bayram
  */
 
-#include <connectivity/sd/App/SDfileHandling.h>
+#include "connectivity/sd/App/SDfileHandling.h"
 
 // Check for valid Initialization
 #ifdef INC_DATAHANDLING_H_
@@ -51,26 +51,6 @@ FRESULT initSDfileHandling() {
 		xprintf("Mount failed.\n");
 	}
 	return fstate;
-}
-
-void getNumberLength(uint16_t *len, uint16_t sz) {
-	if (sz > 99999) {
-		char err[] =
-				"Error, message must not exceed the length of 99999 characters (including CR+LF).\r\n";
-		xprintf(err);
-		*len = 6;
-		return;
-	} else if (sz > 9999) {
-		*len = 5;
-	} else if (sz > 999) {
-		*len = 4;
-	} else if (sz > 99) {
-		*len = 3;
-	} else if (sz > 9) {
-		*len = 2;
-	} else {
-		*len = 1;
-	}
 }
 
 void getFileNameLength(uint16_t *len, uint16_t sec) {

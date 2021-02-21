@@ -4,7 +4,7 @@
 #define OS_HAL_VERSION_F4_ 8
 
 /* USER define STM-Version BEGIN ----------------------------------------------*/
-#define OS_HAL_VERSION_ OS_HAL_VERSION_F1_
+#define OS_HAL_VERSION_ OS_HAL_VERSION_F4_
 /* USER define STM-Version END ------------------------------------------------*/
 
 #if(OS_HAL_VERSION_ & OS_HAL_VERSION_F1_)
@@ -21,10 +21,10 @@
 #define __STM32_SDIO_PERIPHERAL
 #endif
 
-#if OS_HAL_VERSION_ & OS_HAL_VERSION_F1_
-#if defined(STM32F1xx_HAL_CAN_H)
-#elif OS_HAL_VERSION_ & OS_HAL_VERSION_F4_
-if defined(STM32F4xx_HAL_CAN_H)
-#endif
+#if defined(STM32F1xx_HAL_CAN_H) || defined(STM32F4xx_HAL_CAN_H)
 #define __STM32_CAN_PERIPHERAL
+#endif
+
+#if defined(STM32F1xx_HAL_SPI_H) || defined(STM32F4xx_HAL_SPI_H)
+#define __STM32_SPI_PERIPHERAL
 #endif

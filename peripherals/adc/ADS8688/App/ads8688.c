@@ -5,8 +5,9 @@
  *      Author: Bayram
  */
 
-#include <peripherals/adc/ADS8688/App/ads8688.h>
-#ifdef STM32F4xx_HAL_SPI_H
+#include "peripherals/adc/ADS8688/App/ads8688.h"
+
+#ifdef INC_ADS8688_H_
 
 uint16_t cnt;
 
@@ -91,7 +92,6 @@ void initADC(SPI_HandleTypeDef* hspi) {
 }
 
 void measure(SPI_HandleTypeDef* hspi){
-	HAL_StatusTypeDef status;
 	uint16_t txData[2];
 	uint16_t rxData[2];
 	uint16_t result;
@@ -101,7 +101,7 @@ void measure(SPI_HandleTypeDef* hspi){
 	rxData[0] = 0x0000;
 	rxData[1] = 0x0000;
 	HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
-	status = HAL_SPI_TransmitReceive(hspi, (uint8_t*) txData, (uint8_t*) rxData, 2, 100);
+	HAL_SPI_TransmitReceive(hspi, (uint8_t*) txData, (uint8_t*) rxData, 2, 100);
 	HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_SET);
 
 	result = rxData[1];

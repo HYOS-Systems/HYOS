@@ -10,12 +10,11 @@
 
 #ifdef __STM32_SDIO_PERIPHERAL
 
-#ifndef INC_FILEHANDLING_H_
-#define INC_FILEHANDLING_H_
-#endif /* INC_FILEHANDLING_H_ */
+#define INC_DATAHANDLING_H_
 
 #include <stdio.h>
-#include "xprintf/App/xprintf.h"
+#include <connectivity/xprintf/App/xprintf.h>
+#include "utils/App/StringUtils.h"
 #include "ff.h"
 #include "ff_gen_drv.h"
 #include "ffconf.h"
@@ -26,8 +25,6 @@ extern FIL file;
 extern UINT state;
 
 FRESULT initSDfileHandling(void);
-
-void getNumberLength(uint16_t*, uint16_t);
 
 void getFileNameLength(uint16_t*, uint16_t);
 

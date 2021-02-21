@@ -5,10 +5,12 @@
  *      Author: Bayram
  */
 
-#include <hyendOS/systems/rsms/rsms.h>
+#include "hyendOS/systems/rsms/rsms.h"
+
+#ifdef HYENDOS_SYSTEMS_RSMS_RSMS_H_
 
 void rsms_init(void){
 
 }
 
-
+#endif

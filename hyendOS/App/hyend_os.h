@@ -7,17 +7,15 @@
 #pragma once
 
 // Include Drivers
-#include <connectivity/canTri/App/canTri.h>
-#include <connectivity/sd/App/SDfileHandling.h>
-#include <connectivity/xprintf/App/xprintf.h>
-#include <hyendOS/OSVersioning/App/OSVersioning.h>
-#include <peripherals/adc/ADS8688/App/ads8688.h>
+#include "connectivity/canTri/App/canTri.h"
+#include "connectivity/sd/App/SDfileHandling.h"
+#include "connectivity/xprintf/App/xprintf.h"
+#include "hyendOS/OSVersioning/App/OSVersioning.h"
+#include "peripherals/adc/ADS8688/App/ads8688.h"
 
 
 // Define valid Initialization
-#ifndef INC_CCDH_H_
 #define INC_CCDH_H_
-#endif
 
 void voidMethod(void);
 
@@ -46,4 +44,4 @@ Microcontroller* microcontroller;
 void initHyendOS(enum MICROCONTROLLER);
 
 // Include Subsystems
-#include <hyendOS/systems/rsms/rsms.h>
+#include "hyendOS/systems/rsms/rsms.h"

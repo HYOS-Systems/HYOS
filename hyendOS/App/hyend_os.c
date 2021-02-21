@@ -5,7 +5,7 @@
  *      Author: Bayram
  */
 
-#include <hyendOS/App/hyend_os.h>
+#include "hyendOS/App/hyend_os.h"
 
 // Check for valid Initialization
 #ifdef INC_CCDH_H_
