@@ -28,9 +28,9 @@
 		3. If you deleted it or can not find it, click "Add Folder..." and select your Lib
 	- Includes
 		1. Click the "Includes" Tab
-		2. Make sure that on the left under "Libraries" the "GNU C" is selected
+		2. Make sure that on the left under "Languages" the "GNU C" is selected
 		3. Hit "Add...", then "Workspace..."
-		4. Unfold your Project Folder. Select your Lib Folder on the second-highest level
+		4. Unfold your Project Folder. Select your Lib Folder on the second-highest level; hit "OK", "OK" 
 	3. Hit "Apply and Close"; rebuild your project
 	
 4. `#include <OSUserInclude.h>` in your main and whererver else needed
