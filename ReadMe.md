@@ -17,7 +17,7 @@
 2. Confirm if Lib Folder is added
 	1. Rightclick your Project and go to Properties
 	2. Navigate to "Resource - Linked Resources" and click the "Linked Resources" Tab
-	3. You should find your linked Folder here. You may change it, as you wish
+	3. You should find your linked Folder here. You may change it here, if needed
 	
 3. Add to Sources and Includes
 	1. Rightclick your Project and go to Properties
