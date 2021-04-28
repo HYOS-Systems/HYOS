@@ -6,7 +6,7 @@
  */
 #pragma once
 
-#include <hyendOS/OSVersioning/App/OSVersioning.h>
+#include <hyendOS/OSVersioning/App/HALVersioning.h>
 
 #ifdef __STM32_SDIO_PERIPHERAL
 

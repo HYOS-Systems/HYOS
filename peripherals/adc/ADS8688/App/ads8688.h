@@ -6,7 +6,7 @@
  */
 #pragma once
 
-#include "hyendOS/OSVersioning/App/OSVersioning.h"
+#include <hyendOS/OSVersioning/App/HALVersioning.h>
 
 // Required Definitions
 #ifdef __STM32_SPI_PERIPHERAL

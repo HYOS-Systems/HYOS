@@ -8,11 +8,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "connectivity/canTri/App/canTri.h"
 
-/* Check if CAN is implemented -----------------------------------------------*/
-#ifdef INC_CANTRI_H_
-
+#if (INC_CANTRI_H_ == CAN_PERIPHERAL_EXISTS)
 /* Init ------------------------------------------------------------------*/
-void CAN_Start(CANBus* bus) {
+void CAN_Start(CANBus *bus) {
 	uint8_t state;
 	state = HAL_CAN_ActivateNotification(bus->hcan,
 	CAN_IT_RX_FIFO0_MSG_PENDING);
@@ -23,7 +21,7 @@ void CAN_Start(CANBus* bus) {
 	xprintf("CAN%d init completed.\n", bus->number);
 }
 
-void setStandardFilter(CANBus* bus) {
+void setStandardFilter(CANBus *bus) {
 	bus->sFilterConfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;
 	bus->sFilterConfig.FilterIdHigh = 0x350 << 5;
 	bus->sFilterConfig.FilterIdLow = 0;
@@ -40,16 +38,16 @@ void setStandardFilter(CANBus* bus) {
 	xprintf("CAN%d: FilterInitState: %d\n", bus->number, state);
 }
 
-void setStandardHeader(CANBus* bus, uint32_t StdID) {
+void setHeader(CANBus *bus, uint32_t ExtID) {
 	bus->pTxHeader.DLC = 8;
-	bus->pTxHeader.IDE = CAN_ID_STD;
+	bus->pTxHeader.IDE = CAN_ID_EXT;
 	bus->pTxHeader.RTR = CAN_RTR_DATA;
-	bus->pTxHeader.StdId = StdID;
+	bus->pTxHeader.StdId = ExtID;
 
 	bus->TxMailbox = CAN_TX_MAILBOX0;
 }
 
-void init_CAN(CAN_HandleTypeDef* canHandle, uint32_t StdID) {
+void init_CAN(CAN_HandleTypeDef *canHandle, uint32_t StdID) {
 	if (canHandle->Instance == 0) {
 		xprintf("ERROR: Invalid CAN-Handle.\n");
 	}
@@ -58,7 +56,7 @@ void init_CAN(CAN_HandleTypeDef* canHandle, uint32_t StdID) {
 		bus1.hcan = canHandle;
 		bus1.number = 1;
 
-		setStandardHeader(&bus1, StdID);
+		setHeader(&bus1, StdID);
 		setStandardFilter(&bus1);
 		CAN_Start(&bus1);
 
@@ -70,19 +68,19 @@ void init_CAN(CAN_HandleTypeDef* canHandle, uint32_t StdID) {
 		bus2.hcan = canHandle;
 		bus2.number = 2;
 
-		setStandardHeader(&bus2, StdID);
+		setHeader(&bus2, StdID);
 		setStandardFilter(&bus2);
 		CAN_Start(&bus2);
 
 		HAL_CAN_MspInit(bus2.hcan);
-		}
+	}
 #endif
 #ifdef CAN3
 	else if (canHandle->Instance == CAN3) {
 		bus3.hcan = canHandle;
 		bus3.number = 3;
 
-		setStandardHeader(&bus3, StdID);
+		setHeader(&bus3, StdID);
 		setStandardFilter(&bus3);
 		CAN_Start(&bus3);
 
@@ -92,7 +90,7 @@ void init_CAN(CAN_HandleTypeDef* canHandle, uint32_t StdID) {
 }
 
 /* Settings ------------------------------------------------------------------*/
-void CAN_setID(CANBus* bus, uint32_t ID) {
+void CAN_setID(CANBus *bus, uint32_t ID) {
 	bus->pTxHeader.StdId = ID;
 }
 
@@ -109,7 +107,7 @@ void CAN3_setID(uint32_t ID) {
 }
 
 /* Send ------------------------------------------------------------------*/
-void CAN_SendMessage(uint8_t* ch, CANBus* bus) {
+void CAN_SendMessage(uint8_t *ch, CANBus *bus) {
 	if (bus->number != 0) {
 		xprintf("CAN%d: Nachricht wird gesendet: %s\n", bus->number, ch);
 		HAL_StatusTypeDef status = HAL_CAN_AddTxMessage(bus->hcan,
@@ -133,38 +131,42 @@ void CAN3_SendMessage(char *ch) {
 }
 
 /* Receive ------------------------------------------------------------------*/
-void CAN_ReceiveMessage(unsigned char *message, CANBus* bus) {
-	int i;
+void CAN_ReceiveMessage(CANBus *bus) {
 	if (bus->number > 0) {
 		HAL_CAN_GetRxMessage(bus->hcan, CAN_RX_FIFO0, &(bus->pRxHeader),
-				bus->r);
+				bus->receiveBuffer);
 	} else {
 		xprintf("CAN is not initialized.\n");
-		bus->r[0] = 'C';
-		bus->r[1] = 'A';
-		bus->r[2] = 'N';
-		bus->r[3] = 48 + bus->number;
-		bus->r[4] = 'N';
-		bus->r[5] = 'U';
-		bus->r[6] = 'L';
-		bus->r[7] = 'L';
+		bus->receiveBuffer[0] = 'C';
+		bus->receiveBuffer[1] = 'A';
+		bus->receiveBuffer[2] = 'N';
+		bus->receiveBuffer[3] = 48 + bus->number;
+		bus->receiveBuffer[4] = 'N';
+		bus->receiveBuffer[5] = 'U';
+		bus->receiveBuffer[6] = 'L';
+		bus->receiveBuffer[7] = 'L';
 	}
+}
+
+void CAN_ReceiveForwardMessage(unsigned char *message, CANBus *bus) {
+	int i;
+	CAN_ReceiveMessage(bus);
 	for (i = 0; i < 8; i++)
-		message[i] = bus->r[i];
+		message[i] = bus->receiveBuffer[i];
 	message[i] = '\0'; // Adding "EndOfString"
 }
 
 void CAN1_ReceiveMessage(unsigned char *message) {
-	CAN_ReceiveMessage(message, &bus1);
+	CAN_ReceiveForwardMessage(message, &bus1);
 }
 
 void CAN2_ReceiveMessage(unsigned char *message) {
-	CAN_ReceiveMessage(message, &bus2);
+	CAN_ReceiveForwardMessage(message, &bus2);
 }
 
 void CAN3_ReceiveMessage(unsigned char *message) {
-	CAN_ReceiveMessage(message, &bus3);
+	CAN_ReceiveForwardMessage(message, &bus3);
 }
 
-#endif // INC_CANTRI_H_
+#endif
 /****END OF FILE****/

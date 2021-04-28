@@ -6,9 +6,11 @@
  */
 
 #include "connectivity/sd/App/SDfileHandling.h"
+#include "sdio.h"
 
 // Check for valid Initialization
-#ifdef INC_DATAHANDLING_H_
+//#ifdef INC_DATAHANDLING_H_
+#if 1
 
 // FileData
 FATFS fat = { 0 };
@@ -25,8 +27,6 @@ static uint16_t lenD;
 
 FRESULT initSDfileHandling() {
 	xprintf("Start initSDfileHandling\n");
-	FATFS_LinkDriver(&SD_Driver, SDPath);
-	xprintf("Link Successfull\n");
 
 	FRESULT fstate;
 	HAL_Delay(500);
@@ -37,7 +37,7 @@ FRESULT initSDfileHandling() {
 		xprintf("Mount Started.\n");
 		char fileName[] = "init.txt";
 		f_close(&file);
-		fstate = f_open(&file, fileName, FA_WRITE | FA_CREATE_ALWAYS);
+		fstate = f_open(&file, fileName, FA_WRITE | FA_CREATE_ALWAYS | FA_OPEN_APPEND);
 		if (fstate == FR_OK) {
 			xprintf("File opened successfully.\n");
 			char data[] = "initialized.\n";
