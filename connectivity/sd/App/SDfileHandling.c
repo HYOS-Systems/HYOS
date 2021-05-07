@@ -6,7 +6,6 @@
  */
 
 #include "connectivity/sd/App/SDfileHandling.h"
-#include "sdio.h"
 
 // Check for valid Initialization
 //#ifdef INC_DATAHANDLING_H_
@@ -26,30 +25,30 @@ static uint16_t lenF;
 static uint16_t lenD;
 
 FRESULT initSDfileHandling() {
-	xprintf("Start initSDfileHandling\n");
-
+//	xprintf("Start initSDfileHandling\n");
+//
 	FRESULT fstate;
-	HAL_Delay(500);
+	//HAL_Delay(500);
 	fstate = f_mount(&fat, SDPath, 1);
-	xprintf("First mount with fstate: %d\n", fstate);
+	//xprintf("First mount with fstate: %d\n", fstate);
 
-	if (fstate == FR_OK) {
-		xprintf("Mount Started.\n");
-		char fileName[] = "init.txt";
-		f_close(&file);
-		fstate = f_open(&file, fileName, FA_WRITE | FA_CREATE_ALWAYS | FA_OPEN_APPEND);
-		if (fstate == FR_OK) {
-			xprintf("File opened successfully.\n");
-			char data[] = "initialized.\n";
-			fstate = f_write(&file, data, sizeof(data), &state);
-			if (fstate == FR_OK) {
-				xprintf("File written succsesfully.\n");
-			}
-			f_close(&file);
-		}
-	} else {
-		xprintf("Mount failed.\n");
-	}
+//	if (fstate == FR_OK) {
+//		//xprintf("Mount Started.\n");
+//		char fileName[] = "init.txt";
+//		//f_close(&file);
+//		fstate = f_open(&file, fileName, FA_WRITE | FA_CREATE_ALWAYS);
+//		if (fstate == FR_OK) {
+//			//xprintf("File opened successfully.\n");
+//			char data[] = "initialized.\n";
+//			fstate = f_write(&file, data, sizeof(data), &state);
+////			if (fstate == FR_OK) {
+////				xprintf("File written succsesfully.\n");
+////			}
+//			f_close(&file);
+//		}
+//	} else {
+//		//xprintf("Mount failed.\n");
+//	}
 	return fstate;
 }
 
@@ -75,7 +74,7 @@ void packData(char *sendMsg, uint16_t data1, uint16_t data2) {
 }
 
 FRESULT SDFH_openFile(char* fileName) {
-	f_close(&file);
+	//f_close(&file);
 	return f_open(&file, fileName, FA_WRITE | FA_CREATE_ALWAYS);
 }
 
@@ -85,6 +84,20 @@ FRESULT SDFH_closeFile() {
 
 FRESULT SDFH_writeToFile(char* input, uint16_t inputLength) {
 	return f_write(&file, input, inputLength, &state);
+}
+
+FRESULT SDFH_writeIntToFile(int32_t input) {
+	if (input < 0){
+		uint32_t uns = -1 * input;
+		getNumberLength(&len, uns);
+		len += 1;
+	} else {
+		getNumberLength(&len, input);
+	}
+
+	char temp[len];
+	sprintf(temp, "%d", input);
+	SDFH_writeToFile(temp, len);
 }
 
 FRESULT SDFH_writeSingle(char* fileName, char* input, uint16_t inputLength) {

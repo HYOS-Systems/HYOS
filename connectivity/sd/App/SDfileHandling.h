@@ -40,6 +40,8 @@ FRESULT SDFH_closeFile(void);
 
 FRESULT SDFH_writeToFile(char*, uint16_t);
 
+FRESULT SDFH_writeIntToFile(int32_t);
+
 FRESULT SDFH_writeSingle(char*, char*, uint16_t);
 
 void SDFH_writeTest(void);
