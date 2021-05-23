@@ -2,36 +2,27 @@
 
 ## How To Use:
 0. Setup
-	1. Clone this Project into a well known folder, relative to your eclipse projects or to your eclipse workspace.
-	2. Generate your eclipse-project with CubeMX and open it. Proceed in eclipse:
+	1. Clone this Project into a well known folder (Like HyEnD_OS), relative to your eclipse workspace.
+	2. Generate your eclipse-project with CubeMX with Clean Project Generation, as described below. Open it. Proceed in eclipse:
 	
-1. Initially add the Lib Folder to your Project
+1. Add the HyEnD_OS Lib Folder to your Project
 	1. Rightclick your Project and go to Properties
-	2. Navigate to "C/C++ General - Paths and Symbols" and click the "Source Location" Tab
-	3. Click "Link Folder..." and tick the "Link to folder in the file system" box
-	4. Type a meaningful "Folder Name", like "HyEnD_Lib"
-	5. Hit the "Variables..." button and select the "PROJECT_LOC" for the path to your project or "PARENT_LOC" for the path to your workspace, hit "OK"
-	6. Now, after the "PROJECT_LOC" or "PARENT_LOC", add the relative path to the Lib folder of this project. It could look like this: PROJECT_LOC/../../Lib
-	7. Hit "OK" and then "Apply and Close"; rebuild your project
+		- Sources 
+			1. Navigate to "C/C++ General - Paths and Symbols" and click the "Source Location" Tab
+			2. Click "Link Folder..." and tick the "Link to folder in the file system" box
+			3. Hit the "Variables..." button and select the "WORKSPACE_LOC" for your Workspace Path, hit "OK"
+			4. Now, after the "WORKSPACE_LOC", add the relative path to the Lib folder of this project. It could look like this: WORKSPACE_LOC/HyEnD_OS
+			5. Hit "OK"
+		- Includes
+			1. Click the "Includes" Tab
+			2. Make sure that on the left under "Languages" the "GNU C" is selected
+			3. Hit "Add...", then "Workspace..."
+			4. Unfold your Project Folder. Select your HyEnD_OS LibFolder on the second-highest level; hit "OK", "OK" 
+	2. Hit "Apply and Close"; rebuild your project
 	
-2. Confirm if Lib Folder is added
-	1. Rightclick your Project and go to Properties
-	2. Navigate to "Resource - Linked Resources" and click the "Linked Resources" Tab
-	3. You should find your linked Folder here. You may change it here, if needed
-	
-3. Add to Sources and Includes
-	1. Rightclick your Project and go to Properties
-	2. Navigate to "C/C++ General - Paths and Symbols"
-	- Sources 
-		1. Click the "Source Location" Tab
-		2. If you did step 1 and did not remove your folder from here, you should find it here under /Project_Name/Your_Lib_Name
-		3. If you deleted it or can not find it, click "Add Folder..." and select your Lib
-	- Includes
-		1. Click the "Includes" Tab
-		2. Make sure that on the left under "Languages" the "GNU C" is selected
-		3. Hit "Add...", then "Workspace..."
-		4. Unfold your Project Folder. Select your Lib Folder on the second-highest level; hit "OK", "OK" 
-	3. Hit "Apply and Close"; rebuild your project
+2. Confirm if HyEnD_OS Folder is added
+	1. Navigate to "Resource - Linked Resources" and click the "Linked Resources" Tab
+	2. You should find your linked Folder here. You may change it here, if needed
 	
 4. `#include <OSUserInclude.h>` in your main and whererver else needed
 
