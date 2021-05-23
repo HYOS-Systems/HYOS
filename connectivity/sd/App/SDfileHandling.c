@@ -20,9 +20,9 @@ FRESULT fstate = FR_INT_ERR;
 // TimeData
 static uint16_t time = 0;
 static uint16_t sec = 0;
-static uint16_t len;
-static uint16_t lenF;
-static uint16_t lenD;
+static uint8_t len;
+static uint8_t lenF;
+static uint8_t lenD;
 
 FRESULT initSDfileHandling() {
 //	xprintf("Start initSDfileHandling\n");
@@ -54,7 +54,7 @@ FRESULT initSDfileHandling() {
 	return fstate;
 }
 
-void getFileNameLength(uint16_t *len, uint16_t sec) {
+void getFileNameLength(uint8_t *len, uint16_t sec) {
 	getNumberLength(len, sec);
 	*len += 9;
 }
@@ -63,9 +63,9 @@ void getFileName(char *sendMsg, uint16_t sec) {
 	sprintf(sendMsg, "%d.txt", sec);
 }
 
-void getDataLength(uint16_t *len, uint16_t data1, uint16_t data2) {
-	uint16_t len1;
-	uint16_t len2;
+void getDataLength(uint8_t *len, uint16_t data1, uint16_t data2) {
+	uint8_t len1;
+	uint8_t len2;
 	getNumberLength(&len1, data1);
 	getNumberLength(&len2, data2);
 	*len = len1 + len2 + 2;
@@ -98,8 +98,8 @@ FRESULT SDFH_writeIntToFile(int32_t input) {
 	}
 
 	char temp[len];
-	sprintf(temp, "%d", input);
-	SDFH_writeToFile(temp, len);
+	sprintf(temp, "%d", (int) input);
+	return SDFH_writeToFile(temp, len);
 }
 
 FRESULT SDFH_writeSingle(char* fileName, char* input, uint16_t inputLength) {

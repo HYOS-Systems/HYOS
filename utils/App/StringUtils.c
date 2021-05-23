@@ -10,8 +10,12 @@
 
 #ifdef STRINGUTILS_H_
 
-void getNumberLength(uint32_t *length, uint32_t number) {
+void getNumberLength(uint8_t *length, uint64_t number) {
 	*length = floor(log10(number)) + 1;
+}
+
+//void getNumberLength(uint8_t *length, uint32_t number) {
+//	*length = floor(log10(number)) + 1;
 
 //	if (sz > 99999999999) {
 //		char err[] =
@@ -42,10 +46,10 @@ void getNumberLength(uint32_t *length, uint32_t number) {
 //	} else {
 //		*len = 1;
 //	}
-}
+//}
 
 void test_getNumberLength(){
-	uint32_t len  = 0;
+	uint8_t len  = 0;
 
 	for (uint32_t j = 0; j<9; j++){
 	    int lower = pow(10, j);

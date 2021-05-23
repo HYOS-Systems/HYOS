@@ -18,7 +18,13 @@
 #include "connectivity/sd/App/SDfileHandling.h"
 #include "spi.h"
 
-void initADC(SPI_HandleTypeDef*);
-void measure(SPI_HandleTypeDef*);
+typedef struct {
+	GPIO_TypeDef* cs_port;
+	uint16_t cs_pin;
+	SPI_HandleTypeDef* hspi;
+} ADS_8688;
+
+void initADC(ADS_8688*);
+void measure(ADS_8688*);
 
 #endif /* STM32F#xx_HAL_SPI_H */

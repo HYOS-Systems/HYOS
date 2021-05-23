@@ -26,11 +26,11 @@ extern UINT state;
 
 FRESULT initSDfileHandling(void);
 
-void getFileNameLength(uint16_t*, uint16_t);
+void getFileNameLength(uint8_t*, uint16_t);
 
 void getFileName(char*, uint16_t);
 
-void getDataLength(uint16_t*, uint16_t, uint16_t);
+void getDataLength(uint8_t*, uint16_t, uint16_t);
 
 void packData(char*, uint16_t, uint16_t);
 
