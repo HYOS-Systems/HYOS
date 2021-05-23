@@ -9,7 +9,7 @@
 
 // Check for valid Initialization
 //#ifdef INC_DATAHANDLING_H_
-#if 1
+#ifdef INC_DATAHANDLING_H_
 
 // FileData
 FATFS fat = { 0 };
@@ -29,6 +29,8 @@ FRESULT initSDfileHandling() {
 //
 	FRESULT fstate;
 	//HAL_Delay(500);
+	fstate = f_mount(0, SDPath, 0);
+	xprintf("First unmount with fstate: %d\n", fstate);
 	fstate = f_mount(&fat, SDPath, 1);
 	//xprintf("First mount with fstate: %d\n", fstate);
 
