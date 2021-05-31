@@ -8,7 +8,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "connectivity/canTri/App/canTri.h"
 
-#if (INC_CANTRI_H_ == CAN_PERIPHERAL_EXISTS)
+#ifdef INC_CANTRI_H_
 /* Init ------------------------------------------------------------------*/
 void CAN_Start(CANBus *bus) {
 	uint8_t state;

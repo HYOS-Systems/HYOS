@@ -7,23 +7,20 @@
 
 #include <hyendOS/OSVersioning/App/HALVersioning.h>
 
-#define CAN_PERIPHERAL_MISSING 1
-#define CAN_PERIPHERAL_EXISTS 3
 
 #ifdef __STM32_CAN_PERIPHERAL
-#define INC_CANTRI_H_ CAN_PERIPHERAL_EXISTS
-#else
-#define INC_CANTRI_H_ CAN_PERIPHERAL_MISSING
+#define INC_CANTRI_H_
 #endif
 
-#if (INC_CANTRI_H_ == CAN_PERIPHERAL_EXISTS)
+//#if (INC_CANTRI_H_ == CAN_PERIPHERAL_EXISTS)
+#ifdef INC_CANTRI_H_
 #include "can.h"
 #include "connectivity/xprintf/App/xprintf.h"
 #endif
 
 typedef struct {
 	uint8_t number;
-#if (INC_CANTRI_H_ == CAN_PERIPHERAL_EXISTS)
+#ifdef INC_CANTRI_H_
 	CAN_TxHeaderTypeDef pTxHeader;
 	CAN_RxHeaderTypeDef pRxHeader;
 	uint32_t TxMailbox;
@@ -35,7 +32,8 @@ typedef struct {
 #endif
 } CANBus;
 
-#if (INC_CANTRI_H_ == CAN_PERIPHERAL_EXISTS)
+//#if (INC_CANTRI_H_ == CAN_PERIPHERAL_EXISTS)
+#ifdef INC_CANTRI_H_
 CANBus bus1;
 CANBus bus2;
 CANBus bus3;

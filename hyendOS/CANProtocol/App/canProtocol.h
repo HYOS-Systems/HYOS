@@ -11,7 +11,7 @@
 #include <hyendOS/StateTransition/stateTranstion.h>
 #include "connectivity/canTri/App/canTri.h"
 
-#if (INC_CANTRI_H_ == CAN_PERIPHERAL_EXISTS)
+#ifdef INC_CANTRI_H_
 #define CANPROTOCOL_H_
 #endif
 
