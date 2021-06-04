@@ -35,6 +35,6 @@ typedef struct {
 } ADS_8688;
 
 void initADC(ADS_8688*);
-void measure(ADS_8688*);
+uint16_t measure(ADS_8688*);
 
 #endif /* STM32F#xx_HAL_SPI_H */
