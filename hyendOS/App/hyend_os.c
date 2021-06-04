@@ -37,8 +37,8 @@ void initFSMS() {
 void initRSMS() {
 	microcontroller->number = RSMS;
 	microcontroller->master = IFC;
-	microcontroller->initHandle = &rsms_test_init;
-	microcontroller->canNVICHandle = &rsms_test_canHandle;
+//	microcontroller->initHandle = &rsms_test_init;
+//	microcontroller->canNVICHandle = &rsms_test_canHandle;
 }
 
 void initVAS() {
