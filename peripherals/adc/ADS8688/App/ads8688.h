@@ -6,7 +6,7 @@
  */
 #pragma once
 
-#include <hyendOS/OSVersioning/App/HALVersioning.h>
+#include "connectivity/hyend_os_connectivity.h"
 
 // Required Definitions
 #ifdef __STM32_SPI_PERIPHERAL
@@ -15,13 +15,23 @@
 #define INC_ADS8688_H_
 
 #include <stdio.h>
-#include "connectivity/sd/App/SDfileHandling.h"
+//#include "connectivity/sd/App/SDfileHandling.h"
 #include "spi.h"
 
+typedef enum {
+	PM2V5	= 0b0000,
+	PM1V25	= 0b0001,
+	PM0V635	= 0b0010,
+	ZT2V5	= 0b0101,
+	ZT1V25	= 0b0110
+} ADS_INPUT_RANGE;
+
 typedef struct {
+	SPI_HandleTypeDef* hspi;
 	GPIO_TypeDef* cs_port;
 	uint16_t cs_pin;
-	SPI_HandleTypeDef* hspi;
+	uint8_t active_pins;
+	ADS_INPUT_RANGE input_range;
 } ADS_8688;
 
 void initADC(ADS_8688*);
