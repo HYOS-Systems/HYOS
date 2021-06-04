@@ -5,10 +5,10 @@ Dependency to HAL_F4xx Library
 
 HowTo init CubeMX (Baud Rate: 1000 MHz)
 1. Clock and Baud Rate
-	1. Set APB1 Clock to 32 MHz (under Clock Configuration)
+	1. Set APB1 Clock to 16/24/32/48 MHz (under Clock Configuration)
 	2. Activate all desired CAN Settings (Master or Slave, whatever it is) (under Pinout & Configuratio)
 	3. For every CAN-"Parameter Settings":
-	  - Set Prescaler to 4
+	  - Set Prescaler to 2/3/4/6 depending on your APB1 Clock Speed
 	  - Set Time Quanta in Bit Segment 1 to 6
 	  - Set Time Quanta in Bit Segment 2 to 1
 	  - Set ReSynchronization Jump Width to 1
