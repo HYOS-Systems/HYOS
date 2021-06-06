@@ -12,4 +12,5 @@
 
 #include "hyendOS/StateTransition/stateTranstion.h"
 #include "hyendOS/CANProtocol/App/canProtocol.h"
+#include "hyendOS/CANProtocol/Impl/canProtocolImpl.h"
 
