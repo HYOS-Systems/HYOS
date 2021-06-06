@@ -38,7 +38,7 @@ void setStandardFilter(CANBus *bus) {
 	xprintf("CAN%d: FilterInitState: %d\n", bus->number, state);
 }
 
-void setHeader(CANBus *bus, uint32_t ExtID) {
+void CAN_setHeader(CANBus *bus, uint32_t ExtID) {
 	bus->pTxHeader.DLC = 8;
 	bus->pTxHeader.IDE = CAN_ID_EXT;
 	bus->pTxHeader.RTR = CAN_RTR_DATA;
@@ -47,7 +47,7 @@ void setHeader(CANBus *bus, uint32_t ExtID) {
 	bus->TxMailbox = CAN_TX_MAILBOX0;
 }
 
-void init_CAN(CAN_HandleTypeDef *canHandle, uint32_t StdID) {
+void CAN_init(CAN_HandleTypeDef *canHandle, uint32_t StdID) {
 	if (canHandle->Instance == 0) {
 		xprintf("ERROR: Invalid CAN-Handle.\n");
 	}
@@ -56,7 +56,7 @@ void init_CAN(CAN_HandleTypeDef *canHandle, uint32_t StdID) {
 		bus1.hcan = canHandle;
 		bus1.number = 1;
 
-		setHeader(&bus1, StdID);
+		CAN_setHeader(&bus1, StdID);
 		setStandardFilter(&bus1);
 		CAN_Start(&bus1);
 
@@ -68,7 +68,7 @@ void init_CAN(CAN_HandleTypeDef *canHandle, uint32_t StdID) {
 		bus2.hcan = canHandle;
 		bus2.number = 2;
 
-		setHeader(&bus2, StdID);
+		CAN_setHeader(&bus2, StdID);
 		setStandardFilter(&bus2);
 		CAN_Start(&bus2);
 
@@ -80,7 +80,7 @@ void init_CAN(CAN_HandleTypeDef *canHandle, uint32_t StdID) {
 		bus3.hcan = canHandle;
 		bus3.number = 3;
 
-		setHeader(&bus3, StdID);
+		CAN_setHeader(&bus3, StdID);
 		setStandardFilter(&bus3);
 		CAN_Start(&bus3);
 

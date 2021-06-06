@@ -24,7 +24,7 @@ static uint8_t len;
 static uint8_t lenF;
 static uint8_t lenD;
 
-FRESULT initSDfileHandling() {
+FRESULT SDFH_init() {
 //	xprintf("Start initSDfileHandling\n");
 //
 	FRESULT fstate;
@@ -54,16 +54,16 @@ FRESULT initSDfileHandling() {
 	return fstate;
 }
 
-void getFileNameLength(uint8_t *len, uint16_t sec) {
+void SDFH_getFileNameLength(uint8_t *len, uint16_t sec) {
 	getNumberLength(len, sec);
 	*len += 9;
 }
 
-void getFileName(char *sendMsg, uint16_t sec) {
+void SDFH_getFileName(char *sendMsg, uint16_t sec) {
 	sprintf(sendMsg, "%d.txt", sec);
 }
 
-void getDataLength(uint8_t *len, uint16_t data1, uint16_t data2) {
+void SDFH_getDataLength(uint8_t *len, uint16_t data1, uint16_t data2) {
 	uint8_t len1;
 	uint8_t len2;
 	getNumberLength(&len1, data1);
@@ -71,7 +71,7 @@ void getDataLength(uint8_t *len, uint16_t data1, uint16_t data2) {
 	*len = len1 + len2 + 2;
 }
 
-void packData(char *sendMsg, uint16_t data1, uint16_t data2) {
+void SDFH_packData(char *sendMsg, uint16_t data1, uint16_t data2) {
 	sprintf(sendMsg, "%d\t%d\n", data1, data2);
 }
 
@@ -115,12 +115,12 @@ void SDFH_writeTest() {
 	time = 0;
 	sec = 101;
 	xprintf("Time: %d\n", sec);
-	getFileNameLength(&lenF, sec);
+	SDFH_getFileNameLength(&lenF, sec);
 	char fileName[lenF];
-	getFileName(fileName, sec);
-	getDataLength(&lenD, sec, time);
+	SDFH_getFileName(fileName, sec);
+	SDFH_getDataLength(&lenD, sec, time);
 	char data1[lenD];
-	packData(data1, sec, time);
+	SDFH_packData(data1, sec, time);
 	fstate = SDFH_writeSingle(fileName, data1, lenD);
 	xprintf("File was opened wit state: %d", fstate);
 }
@@ -129,17 +129,17 @@ void SDFH_normalOperation() {
 //	fstate = FR_INT_ERR;
 	if (time == 0 && sec < 16) {
 		xprintf("Time: %d\n", sec);
-		getFileNameLength(&len, sec);
+		SDFH_getFileNameLength(&len, sec);
 		char fileName[len];
-		getFileName(fileName, sec);
+		SDFH_getFileName(fileName, sec);
 		fstate = f_open(&file, fileName, FA_WRITE | FA_CREATE_ALWAYS);
 	}
 
 	if (fstate == FR_OK) {
 		//			xprintf("File opened successfully.\n");
-		getDataLength(&len, sec, time);
+		SDFH_getDataLength(&len, sec, time);
 		char data[len];
-		packData(data, sec, time);
+		SDFH_packData(data, sec, time);
 		fstate = f_write(&file, data, len, &state);
 		if (fstate == FR_OK) {
 //			xprintf("File written succsesfully.\n");

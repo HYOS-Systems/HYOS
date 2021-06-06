@@ -26,13 +26,13 @@ extern UINT state;
 
 FRESULT initSDfileHandling(void);
 
-void getFileNameLength(uint8_t*, uint16_t);
+void SDFH_getFileNameLength(uint8_t*, uint16_t);
 
-void getFileName(char*, uint16_t);
+void SDFH_getFileName(char*, uint16_t);
 
-void getDataLength(uint8_t*, uint16_t, uint16_t);
+void SDFH_getDataLength(uint8_t*, uint16_t, uint16_t);
 
-void packData(char*, uint16_t, uint16_t);
+void SDFH_packData(char*, uint16_t, uint16_t);
 
 FRESULT SDFH_openFile(char*);
 

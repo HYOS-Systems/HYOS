@@ -34,7 +34,7 @@ typedef struct {
 	ADS_INPUT_RANGE input_range;
 } ADS_8688;
 
-void initADC(ADS_8688*);
-uint16_t measure(ADS_8688*);
+void ADS_init(ADS_8688*);
+uint16_t ADS_measure(ADS_8688*);
 
 #endif /* STM32F#xx_HAL_SPI_H */

@@ -38,9 +38,9 @@ CANBus bus1;
 CANBus bus2;
 CANBus bus3;
 
-void init_CAN(CAN_HandleTypeDef*, uint32_t);
+void CAN_init(CAN_HandleTypeDef*, uint32_t);
 
-void setHeader(CANBus* bus, uint32_t ExtID);
+void CAN_setHeader(CANBus* bus, uint32_t ExtID);
 
 void CAN_SendMessage(uint8_t *ch, CANBus *bus);
 void CAN1_SendMessage(char *ch);

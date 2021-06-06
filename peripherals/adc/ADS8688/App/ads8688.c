@@ -11,7 +11,7 @@
 
 uint16_t cnt;
 
-void writeStatus(char* message, uint16_t len, HAL_StatusTypeDef status){
+void ADS_writeStatus(char* message, uint16_t len, HAL_StatusTypeDef status){
 	uint8_t numbLen;
 	uint16_t data = (uint16_t) status;
 	getNumberLength(&numbLen, data);
@@ -22,7 +22,7 @@ void writeStatus(char* message, uint16_t len, HAL_StatusTypeDef status){
 //	SDFH_writeToFile(payload, pay_len);
 }
 
-void appendData(char* message, uint16_t len, uint16_t data){
+void ADS_appendData(char* message, uint16_t len, uint16_t data){
 	uint8_t data_len;
 	getNumberLength(&data_len, data);
 	uint16_t pay_len = data_len + len + 1;
@@ -32,7 +32,7 @@ void appendData(char* message, uint16_t len, uint16_t data){
 //	SDFH_writeToFile(payload, pay_len);
 }
 
-void writeData(char* message, uint16_t len, uint16_t data){
+void ADS_writeData(char* message, uint16_t len, uint16_t data){
 	uint8_t data_len;
 	getNumberLength(&data_len, data);
 	uint16_t pay_len = data_len + len + 1;
@@ -49,7 +49,7 @@ void writeData(char* message, uint16_t len, uint16_t data){
 	cnt++;
 }
 
-void writeRegister(uint16_t command, ADS_8688* ads){
+void ADS_writeRegister(uint16_t command, ADS_8688* ads){
 	uint16_t datTx[2];
 	uint16_t datRx[2];
 
@@ -64,69 +64,69 @@ void writeRegister(uint16_t command, ADS_8688* ads){
 //	HAL_StatusTypeDef status2 = HAL_SPI_Receive(ads->hspi, (uint8_t*) datRx, 2, 100);
 	HAL_GPIO_WritePin(ads->cs_port, ads->cs_pin, GPIO_PIN_SET);
 
-	appendData("SPI command: ", 13, datTx[0]);
-	appendData("SPI Status: ", 12, status);
+	ADS_appendData("SPI command: ", 13, datTx[0]);
+	ADS_appendData("SPI Status: ", 12, status);
 //	appendData("SPI Status1: ", 13, status1);
 //	appendData("SPI Status2: ", 13, status2);
-	appendData("Data Written: ", 14, datRx[0]);
-	appendData("Data Written: ", 14, datRx[1]);
+	ADS_appendData("Data Written: ", 14, datRx[0]);
+	ADS_appendData("Data Written: ", 14, datRx[1]);
 }
 
-void setInputRange(ADS_8688* ads){
+void ADS_setInputRange(ADS_8688* ads){
 	if (0b00000001 & ads->active_pins){
-		writeRegister(0x0B00 | (uint8_t) ads->input_range, ads);  // Input Range Channel 0
+		ADS_writeRegister(0x0B00 | (uint8_t) ads->input_range, ads);  // Input Range Channel 0
 	}
 	if (0b00000010 & ads->active_pins){
-		writeRegister(0x0D00 | (uint8_t) ads->input_range, ads);  // Input Range Channel 1
+		ADS_writeRegister(0x0D00 | (uint8_t) ads->input_range, ads);  // Input Range Channel 1
 	}
 	if (0b00000100 & ads->active_pins){
-		writeRegister(0x0F00 | (uint8_t) ads->input_range, ads);  // Input Range Channel 2
+		ADS_writeRegister(0x0F00 | (uint8_t) ads->input_range, ads);  // Input Range Channel 2
 	}
 	if (0b00001000 & ads->active_pins){
-		writeRegister(0x1100 | (uint8_t) ads->input_range, ads);  // Input Range Channel 3
+		ADS_writeRegister(0x1100 | (uint8_t) ads->input_range, ads);  // Input Range Channel 3
 	}
 	if (0b00010000 & ads->active_pins){
-		writeRegister(0x1300 | (uint8_t) ads->input_range, ads);  // Input Range Channel 4
+		ADS_writeRegister(0x1300 | (uint8_t) ads->input_range, ads);  // Input Range Channel 4
 	}
 	if (0b00100000 & ads->active_pins){
-		writeRegister(0x1500 | (uint8_t) ads->input_range, ads);  // Input Range Channel 5
+		ADS_writeRegister(0x1500 | (uint8_t) ads->input_range, ads);  // Input Range Channel 5
 	}
 	if (0b01000000 & ads->active_pins){
-		writeRegister(0x1700 | (uint8_t) ads->input_range, ads);  // Input Range Channel 6
+		ADS_writeRegister(0x1700 | (uint8_t) ads->input_range, ads);  // Input Range Channel 6
 	}
 	if (0b10000000 & ads->active_pins){
-		writeRegister(0x1900 | (uint8_t) ads->input_range, ads);  // Input Range Channel 7
+		ADS_writeRegister(0x1900 | (uint8_t) ads->input_range, ads);  // Input Range Channel 7
 	}
 }
 
-void initADC(ADS_8688* ads) {
+void ADS_init(ADS_8688* ads) {
 	xprintf("Opened File: ADX.txt\n");
 	xprintf("Initialize ADC:\n");
 	cnt = 0; // init counter for measurement
 
 	xprintf("\nDevice Reset:\n");
-	writeRegister(0x8500, ads);  // Device Reset
+	ADS_writeRegister(0x8500, ads);  // Device Reset
 
 	xprintf("\nAuto Channel:\n");
-	writeRegister(0xA000, ads);  // Auto Channel with Reset
+	ADS_writeRegister(0xA000, ads);  // Auto Channel with Reset
 
 	xprintf("\nEnable Channel 4:\n");
-	writeRegister(0x0300 | ads->active_pins, ads);  // Enable channel 4
+	ADS_writeRegister(0x0300 | ads->active_pins, ads);  // Enable channel 4
 
 	xprintf("\nOther Channels Power Down:\n");
-	writeRegister(0x0500 | ((uint8_t) (~ads->active_pins)), ads);  // Other channels Power Down
+	ADS_writeRegister(0x0500 | ((uint8_t) (~ads->active_pins)), ads);  // Other channels Power Down
 
 	xprintf("\nInput Range:\n");
-	setInputRange(ads);
+	ADS_setInputRange(ads);
 
 	xprintf("\nStart Sampling:\n");
-	writeRegister(0xA000, ads);  // Start Sampling
+	ADS_writeRegister(0xA000, ads);  // Start Sampling
 
 	xprintf("\nInitialization finished.\n");
 	xprintf("Closed File.");
 }
 
-uint16_t measure(ADS_8688* ads){
+uint16_t ADS_measure(ADS_8688* ads){
 	uint16_t txData[2];
 	uint16_t rxData[2];
 	uint16_t result;
@@ -140,7 +140,7 @@ uint16_t measure(ADS_8688* ads){
 	HAL_GPIO_WritePin(ads->cs_port, ads->cs_pin, GPIO_PIN_SET);
 
 	result = rxData[1];
-	writeData("Measure: ", 9, result);
+	ADS_writeData("Measure: ", 9, result);
 	return result;
 }
 
