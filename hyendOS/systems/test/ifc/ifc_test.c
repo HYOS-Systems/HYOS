@@ -16,9 +16,9 @@ void ifc_test_init(){
 
 void ifc_canHandle(CANBus* bus){
 	MessageHeader mHeader;
-	MESSAGE_TYPE mType = receiveMessage(bus, &mHeader);
+	MESSAGE_TYPE mType = CANI_receiveMessage(bus, &mHeader);
 
-	if(!isThisTarget(&mHeader)){
+	if(!CANI_isThisTarget(&mHeader)){
 		return;
 	}
 
@@ -29,23 +29,23 @@ void ifc_canHandle(CANBus* bus){
 
 	switch(mType){
 		case DATA:
-			interpretDataMessage(bus, &dataMessage);
+			CANI_interpretDataMessage(bus, &dataMessage);
 			/* Do stuff with dMessage */
 			break;
 		case STATUS:
-			interpretStateMessage(bus, &stateMessage);
+			CANI_interpretStateMessage(bus, &stateMessage);
 			/* Do stuff with sMessage */
 			break;
 		case REQUEST_DATA:
-			interpretRequestDataMessage(bus, &reqDataMessage);
+			CANI_interpretRequestDataMessage(bus, &reqDataMessage);
 			//responseWithData(bus, &reqDataMessage);
 			break;
 		case REQUEST_STATUS:
-			interpretRequestStateMessage(bus, &reqStateMessage);
+			CANI_interpretRequestStateMessage(bus, &reqStateMessage);
 			//responseWithState(bus, &reqStateMessage);
 			break;
 		case TRANSITION:
-			interpretStateTransitionMessage(bus, &mHeader);
+			CANI_interpretTransitionMessage(bus, &mHeader);
 			break;
 		default:
 			break;
