@@ -7,13 +7,19 @@
 
 #pragma once
 
-#include <hyendOS/OSVersioning/App/HALVersioning.h>
-#include <hyendOS/StateTransition/stateTranstion.h>
-#include "connectivity/canTri/App/canTri.h"
-
-#ifdef INC_CANTRI_H_
 #define CANPROTOCOL_H_
-#endif
+#include <hyendOS/App/hyend_os_enums.h>
+
+// ----------------------------------------------------------
+// Basic Data Types.
+// Use HAL implementation or define own fitting data types
+#include <hyendOS/OSVersioning/App/HALVersioning.h>
+// Choose DataTypes to fit the bit size.
+//typedef unsigned char uint8_t;
+//typedef unsigned short uint16_t;
+//typedef unsigned long uint32_t;
+//typedef long unsigned long uint64_t;
+// ----------------------------------------------------------
 
 typedef enum {
 	DATA_OK = 0,
@@ -22,46 +28,58 @@ typedef enum {
 } DATA_STATUS;
 
 typedef struct {
+	uint32_t extID;
+	uint8_t payload[8];
+	uint8_t dlc;
+} CANPackage;
+
+typedef struct {
 	DATA_ID dataType;
 	DATA_STATUS status;
 	uint16_t payload;
 } Data;
 
-typedef struct{
+typedef struct {
 	MICROCONTROLLER sourceMCU;
 	MICROCONTROLLER targetMCU;
 	MESSAGE_TYPE messageType;
 	uint16_t timestamp;
 } MessageHeader;
 
-typedef struct{
+typedef struct {
 	MessageHeader header;
 	Data data1;
 	Data data2;
 } DataMessage;
 
-typedef struct{
+typedef struct {
 	MessageHeader header;
 	STATE_ID state;
 } StateMessage;
 
-typedef struct{
+typedef struct {
 	MessageHeader header;
 	DATA_ID dataID1;
 	DATA_ID dataID2;
 	STATE_ID state;
 } RequestDataMessage;
 
-MESSAGE_TYPE receiveMessage(CANBus*, MessageHeader*);
-uint8_t isThisTarget(MessageHeader*);
+typedef struct {
+	MessageHeader header;
+	STATE_ID state;
+	uint8_t messageValid;
+} TransitionMessage;
 
-void sendData(CANBus*, DataMessage*);
-void sendState(CANBus*, StateMessage*);
-void sendRequestData(CANBus*, RequestDataMessage*);
-void sendRequestState(CANBus*, StateMessage*);
+MESSAGE_TYPE CANP_unpackHeader(CANPackage *package, MessageHeader *mHeader);
 
-void interpretDataMessage(CANBus*, DataMessage*);
-void interpretStateMessage(CANBus*, StateMessage*);
-void interpretRequestDataMessage(CANBus*, RequestDataMessage*);
-void interpretRequestStateMessage(CANBus*, StateMessage*);
-void interpretStateTransitionMessage(CANBus*, MessageHeader*);
+void CANP_packData(CANPackage *package, DataMessage *message);
+void CANP_packState(CANPackage *package, StateMessage *message);
+void CANP_packRequestData(CANPackage *package, RequestDataMessage *message);
+void CANP_packRequestState(CANPackage *package, StateMessage *message);
+void CANP_packStateTransitionMessage(CANPackage *package, TransitionMessage *message);
+
+void CANP_unpackDataMessage(CANPackage *package, DataMessage *message);
+void CANP_unpackStateMessage(CANPackage *package, StateMessage *message);
+void CANP_unpackRequestDataMessage(CANPackage *package, RequestDataMessage *message);
+void CANP_unpackRequestStateMessage(CANPackage *package, StateMessage *message);
+void CANP_unpackTransitionMessage(CANPackage *package, TransitionMessage *message);

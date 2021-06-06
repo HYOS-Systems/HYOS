@@ -20,151 +20,132 @@ static const uint32_t meTypeMask = 0x00000007;
 static const uint32_t timeFrMask = 0x000FFFFF;
 
 // Receiving -----------------------------------------------------------------------------
-MESSAGE_TYPE receiveMessage(CANBus* bus, MessageHeader* mHeader){
-	CAN_ReceiveMessage(bus);
-	uint32_t header = bus->pRxHeader.ExtId;
-	mHeader->sourceMCU 	 = sourceMask & header >> sourceOffset;
-	mHeader->targetMCU 	 = targetMask & header >> targetOffset;
+MESSAGE_TYPE CANP_unpackHeader(CANPackage *package, MessageHeader *mHeader) {
+	uint32_t header = package->extID;
+	mHeader->sourceMCU = sourceMask & header >> sourceOffset;
+	mHeader->targetMCU = targetMask & header >> targetOffset;
 	mHeader->messageType = meTypeMask & header >> meTypeOffset;
-	mHeader->timestamp 	 = timeFrMask & header >> timeFrOffset;
+	mHeader->timestamp = timeFrMask & header >> timeFrOffset;
 	return mHeader->messageType;
 }
 
-uint8_t isThisTarget(MessageHeader* mHeader){
-	return mHeader->targetMCU == MAX_MCU || mHeader->targetMCU == microcontroller->number;
-}
-
 // Sending -----------------------------------------------------------------------------
-uint32_t buildHeader(MessageHeader* mHeader){
-	uint32_t header =
-			(sourceMask & microcontroller->number << sourceOffset) |
-			(targetMask & mHeader->targetMCU << targetOffset) |
-			(meTypeMask & mHeader->messageType << meTypeOffset) |
-			(timeFrMask & mHeader->timestamp);
+uint32_t CANP_packHeader(MessageHeader *mHeader) {
+	uint32_t header = (sourceMask & mHeader->sourceMCU << sourceOffset)
+			| (targetMask & mHeader->targetMCU << targetOffset)
+			| (meTypeMask & mHeader->messageType << meTypeOffset)
+			| (timeFrMask & mHeader->timestamp);
 	return header;
 }
 
-void buildHalfPayload(uint8_t* payload, Data* data, uint8_t startIndx){
+void buildHalfPayload(uint8_t *payload, Data *data, uint8_t startIndx) {
 	payload[startIndx + 0] = data->status << 4 | (0x0F & data->dataType >> 8);
 	payload[startIndx + 1] = 0xFF & data->dataType;
 	payload[startIndx + 2] = 0xFF & data->payload >> 8;
 	payload[startIndx + 3] = 0xFF & data->payload;
 }
 
-void sendMessage(CANBus* bus, MessageHeader* mHeader, uint8_t* payload){
-	uint32_t header = buildHeader(mHeader);
+void CANP_packMessage(CANPackage *package, MessageHeader *mHeader, uint8_t *payload) {
+	package->extID = CANP_packHeader(mHeader);
 
-	setHeader(bus, header);
-	CAN_SendMessage(payload, bus);
+	for (uint8_t i = 1; i < 8; i++) {
+		package->payload[i] = payload[i];
+	}
 }
 
-void sendData(CANBus* bus, DataMessage* message){
+void CANP_packData(CANPackage *package, DataMessage *message) {
 	message->header.messageType = DATA;
 
 	uint8_t payload[8];
 	buildHalfPayload(payload, &(message->data1), 0);
 	buildHalfPayload(payload, &(message->data2), 4);
 
-	sendMessage(bus, &(message->header), payload);
+	CANP_packMessage(package, &(message->header), payload);
 }
 
-void sendState(CANBus* bus, StateMessage* message){
+void CANP_packState(CANPackage *package, StateMessage *message) {
 	message->header.messageType = STATUS;
 
 	uint8_t payload[8];
 	payload[6] = message->state >> 8;
 	payload[7] = message->state;
 
-	sendMessage(bus, &(message->header), payload);
+	CANP_packMessage(package, &(message->header), payload);
 }
 
-void sendRequestData(CANBus* bus, RequestDataMessage* message){
+void CANP_packRequestData(CANPackage *package, RequestDataMessage *message) {
 	message->header.messageType = REQUEST_DATA;
 
 	uint8_t payload[8];
 	payload[0] = DATA_OK << 4 | (message->dataID1 >> 8 & 0x0F);
 	payload[1] = message->dataID1;
-	payload[2] = microcontroller->state->stateID >> 8;
-	payload[3] = microcontroller->state->stateID;
+	payload[2] = message->state >> 8;
+	payload[3] = message->state;
 	payload[4] = DATA_OK << 4 | (message->dataID2 >> 8 & 0x0F);
 	payload[5] = message->dataID2;
-	payload[6] = microcontroller->state->stateID >> 8;
-	payload[7] = microcontroller->state->stateID;
+	payload[6] = message->state >> 8;
+	payload[7] = message->state;
 
-	sendMessage(bus, &(message->header), payload);
+	CANP_packMessage(package, &(message->header), payload);
 }
 
-void sendRequestState(CANBus* bus, StateMessage* message){
+void CANP_packRequestState(CANPackage *package, StateMessage *message) {
 	message->header.messageType = REQUEST_STATUS;
 
 	uint8_t payload[8];
 	payload[6] = message->state >> 8;
 	payload[7] = message->state;
 
-	sendMessage(bus, &(message->header), payload);
+	CANP_packMessage(package, &(message->header), payload);
 }
 
 // Interpreting -----------------------------------------------------------------------------
-void interptetSingleDataFromMessage(Data* data, uint8_t* buffer, uint8_t startIndx){
+void CANP_unpackSingleDataFromMessage(Data *data, uint8_t *buffer, uint8_t startIndx) {
 	data->status = buffer[startIndx] >> 4;
 	data->dataType = (0x0F & buffer[startIndx]) << 8 | buffer[startIndx + 1];
 	data->payload = buffer[startIndx + 2] << 8 | buffer[startIndx + 3];
 }
 
-STATE_ID getStateIDfromMessage(CANBus* bus){
-	return (0xF & bus->receiveBuffer[6]) << 8 | bus->receiveBuffer[7];
+STATE_ID getStateIDfromMessage(CANPackage *package) {
+	return (0xF & package->payload[6]) << 8 | package->payload[7];
 }
 
-uint8_t isStateBus(CANBus* bus){
-	return microcontroller->stateBus->number == bus->number;
+void CANP_unpackDataMessage(CANPackage *package, DataMessage *message) {
+	CANP_unpackSingleDataFromMessage(&(message->data1), package->payload, 0);
+	CANP_unpackSingleDataFromMessage(&(message->data2), package->payload, 4);
 }
 
-uint8_t isTransitionHeader(MessageHeader* mHeader){
-	return mHeader->messageType == TRANSITION && mHeader->sourceMCU == microcontroller->master;
+void CANP_unpackStateMessage(CANPackage *package, StateMessage *message) {
+	message->state = getStateIDfromMessage(package);
 }
 
-uint8_t isTransitionMessageValid(){
-	uint8_t* message = microcontroller->stateBus->receiveBuffer;
-	MESSAGE_TYPE dType1 = message[0] >> 4;
-	MESSAGE_TYPE dType2 = message[0] & 0x0F;
-	MESSAGE_TYPE dType3 = message[1] >> 4;
-	MESSAGE_TYPE dType4 = message[1] & 0x0F;
-	uint8_t firstHalfIsTransition =
-			dType1 == TRANSITION &&
-			dType2 == TRANSITION &&
-			dType3 == TRANSITION &&
-			dType4 == TRANSITION;
+void CANP_unpackRequestDataMessage(CANPackage *package, RequestDataMessage *message) {
+	message->state = getStateIDfromMessage(package);
+	message->dataID1 = (package->payload[0] & 0x0F) << 8 | package->payload[1];
+	message->dataID2 = (package->payload[4] & 0x0F) << 8 | package->payload[5];
+}
 
-	STATE_ID state1 = message[2] << 8 | message[3];
-	STATE_ID state2 = message[4] << 8 | message[5];
-	STATE_ID state3 = message[6] << 8 | message[7];
+void CANP_unpackRequestStateMessage(CANPackage *package, StateMessage *message) {
+	CANP_unpackStateMessage(package, message);
+}
+
+void CANP_unpackTransitionMessage(CANPackage *package, TransitionMessage *message) {
+	MESSAGE_TYPE dType1 = package->payload[0] >> 4;
+	MESSAGE_TYPE dType2 = package->payload[0] & 0x0F;
+	MESSAGE_TYPE dType3 = package->payload[1] >> 4;
+	MESSAGE_TYPE dType4 = package->payload[1] & 0x0F;
+
+	uint8_t firstHalfIsTransition = dType1 == TRANSITION && dType2 == TRANSITION
+			&& dType3 == TRANSITION && dType4 == TRANSITION;
+
+	STATE_ID state1 = package->payload[2] << 8 | package->payload[3];
+	STATE_ID state2 = package->payload[4] << 8 | package->payload[5];
+	STATE_ID state3 = package->payload[6] << 8 | package->payload[7];
+
 	uint8_t isStatesConsistent = state1 == state2 && state2 == state3;
-	return firstHalfIsTransition && isStatesConsistent;
-}
 
-void interpretDataMessage(CANBus* bus, DataMessage* currentMessage){
-	interptetSingleDataFromMessage(&(currentMessage->data1), bus->receiveBuffer, 0);
-	interptetSingleDataFromMessage(&(currentMessage->data2), bus->receiveBuffer, 4);
-}
-
-void interpretStateMessage(CANBus* bus, StateMessage* message){
-	message->state = getStateIDfromMessage(bus);
-}
-
-void interpretRequestDataMessage(CANBus* bus, RequestDataMessage* message){
-	message->state = getStateIDfromMessage(bus);
-	message->dataID1 = (bus->receiveBuffer[0] & 0x0F) << 8 | bus->receiveBuffer[1];
-	message->dataID2 = (bus->receiveBuffer[4] & 0x0F) << 8 | bus->receiveBuffer[5];
-}
-
-void interpretStateRequestMessage(CANBus* bus, StateMessage* message){
-	interpretStateMessage(bus, message);
-}
-
-void interpretTransitionMessage(CANBus* bus, MessageHeader* mHeader){
-	if (isStateBus(bus) && isTransitionHeader(mHeader) && isTransitionMessageValid()){
-		stateTransition(getStateIDfromMessage(microcontroller->stateBus));
-	}
+	message->messageValid = firstHalfIsTransition && isStatesConsistent;
+	message->state = message->messageValid ? dType1 : NULL_STATE;
 }
 
 #endif
