@@ -72,12 +72,12 @@ void CANI_interptetSingleDataFromMessage(Data* data, uint8_t* buffer, uint8_t st
 	data->payload = buffer[startIndx + 2] << 8 | buffer[startIndx + 3];
 }
 
-uint8_t CANI_isStateBus(CANBus* bus){
-	return microcontroller->stateBus->number == bus->number;
+uint8_t CANI_isMaster(MessageHeader* mHeader){
+	return mHeader->sourceMCU == microcontroller->master;
 }
 
 uint8_t CANI_isTransitionHeader(MessageHeader* mHeader){
-	return mHeader->messageType == TRANSITION && mHeader->sourceMCU == microcontroller->master;
+	return mHeader->messageType == TRANSITION;
 }
 
 void CANI_copyCANpackage(CANPackage* package, CANBus* bus){
@@ -111,7 +111,7 @@ void CANI_interpretStateRequestMessage(CANBus* bus, StateMessage* message){
 void CANI_interpretTransitionMessage(CANBus* bus, TransitionMessage* message){
 	CANI_copyCANpackage(&package, bus);
 	CANP_unpackTransitionMessage(&package, message);
-	if (CANI_isStateBus(bus) && CANI_isTransitionHeader(&message->header) && message->messageValid){
+	if (CANI_isMaster(&message->header) && CANI_isTransitionHeader(&message->header) && message->messageValid){
 		stateTransition(message->state);
 	}
 }

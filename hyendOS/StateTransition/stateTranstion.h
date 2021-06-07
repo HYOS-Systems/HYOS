@@ -7,20 +7,20 @@
 #pragma once
 
 #include <hyendOS/OSVersioning/App/HALVersioning.h>
-#include "connectivity/canTri/App/canTri.h"
 
 #define INC_STATE_TRANSITION_
 
 typedef struct {
 	void (*entry)(void);
 	void (*whileHandle)(void);
+	void (*exit)(void);
+
 	void (*alfaHandle)(void);
 	void (*bravoHandle)(void);
 	void (*charlieHandle)(void);
 	void (*deltaHandle)(void);
 	void (*echoHandle)(void);
 	void (*foxtrotHandle)(void);
-	void (*exit)(void);
 } Tasks;
 
 typedef struct {
@@ -33,7 +33,6 @@ typedef struct {
 	MICROCONTROLLER number;
 	MICROCONTROLLER master;
 	MC_State mcStates[STATE_ID_END];
-	CANBus *stateBus;
 } Microcontroller;
 
 MC_State voidMCState;
