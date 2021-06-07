@@ -26,6 +26,7 @@ void ifc_canHandle(CANBus* bus){
 	StateMessage stateMessage;
 	RequestDataMessage reqDataMessage;
 	StateMessage reqStateMessage;
+	TransitionMessage transitionMessage;
 
 	switch(mType){
 		case DATA:
@@ -45,7 +46,7 @@ void ifc_canHandle(CANBus* bus){
 			//responseWithState(bus, &reqStateMessage);
 			break;
 		case TRANSITION:
-			CANI_interpretTransitionMessage(bus, &mHeader);
+			CANI_interpretTransitionMessage(bus, &transitionMessage);
 			break;
 		default:
 			break;

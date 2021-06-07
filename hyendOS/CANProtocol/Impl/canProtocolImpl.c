@@ -31,7 +31,7 @@ void CANI_fillHeader(MessageHeader *mHeader) {
 }
 
 void CANI_sendMessage(CANBus* bus, MessageHeader* mHeader, uint8_t* payload){
-	setHeader(bus, package.extID);
+	CAN_setHeader(bus, package.extID);
 	CAN_SendMessage(payload, bus);
 }
 

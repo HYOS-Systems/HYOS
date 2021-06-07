@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <hyendOS/OSVersioning/App/HALVersioning.h>
+#include "peripherals/hyend_os_peripherals.h"
+#include "hyendOS/CANProtocol/App/canProtocol.h"
 #include <hyendOS/StateTransition/stateTranstion.h>
-#include "connectivity/canTri/App/canTri.h"
 
 #ifdef INC_CANTRI_H_
 #define CANPROTOCOLIMPL_H_

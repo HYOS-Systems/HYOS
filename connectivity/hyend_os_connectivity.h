@@ -8,6 +8,7 @@
 #pragma once
 
 #include <hyendOS/OSVersioning/App/HALVersioning.h>
+
+#include "connectivity/xprintf/App/xprintf.h"
 #include "connectivity/canTri/App/canTri.h"
 #include "connectivity/sd/App/SDfileHandling.h"
-#include "connectivity/xprintf/App/xprintf.h"

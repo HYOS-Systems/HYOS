@@ -15,5 +15,5 @@ void voidMethod(void);
 void initHyendOS(MICROCONTROLLER);
 
 // Include Subsystems
-#include "hyendOS/systems/test/rsms/rsms_test.h"
-#include "hyendOS/systems/test/ifc/ifc_test.h"
+#include "hyendOS/systems/hyend_os_systems.h"
+#include "hyendOS/systems/test/hyend_os_test_systems.h"

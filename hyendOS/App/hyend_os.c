@@ -53,20 +53,26 @@ void initGSE() {
 	// Insert Handle-Initialization here
 }
 
+void initDefaultTask(Tasks* tasks){
+	tasks->entry = &voidMethod;
+	tasks->whileHandle = &voidMethod;
+	tasks->exit = &voidMethod;
+
+	tasks->alfaHandle = &voidMethod;
+	tasks->bravoHandle = &voidMethod;
+	tasks->charlieHandle = &voidMethod;
+	tasks->deltaHandle = &voidMethod;
+	tasks->echoHandle = &voidMethod;
+	tasks->foxtrotHandle = &voidMethod;
+}
+
 void initDefault() {
 	xprintf("Initializing MCs\n");
 
 	microcontroller = &mc;
 
-	voidTasks.alfaHandle = &voidMethod;
-	voidTasks.bravoHandle = &voidMethod;
-	voidTasks.charlieHandle = &voidMethod;
-	voidTasks.deltaHandle = &voidMethod;
-	voidTasks.echoHandle = &voidMethod;
-	voidTasks.foxtrotHandle = &voidMethod;
-
+	initDefaultTask(&voidMCState.tasks);
 	voidMCState.stateID = NULL_STATE;
-	voidMCState.tasks = &voidTasks;
 
 	/*
 	 * What is done after this for-loop?
@@ -78,10 +84,8 @@ void initDefault() {
 	 * - fill method Handles
 	 * - define Tasks for MC_States -> can be done as late binding in initHandle()
 	 */
-	microcontroller->initHandle = &voidMethod;
-	microcontroller->canNVICHandle = &voidMethod;
 	for (int j = 0; j < STATE_ID_END; j++) {
-		microcontroller->mcStates[j] = voidMCState;
+		initDefaultTask(&microcontroller->mcStates[j].tasks);
 		microcontroller->mcStates[j].stateID = j;
 	}
 	microcontroller->state = getMCState(NULL_STATE);
@@ -119,7 +123,6 @@ void initHyendOS(MICROCONTROLLER mc_ID) {
 		break;
 	}
 
-	microcontroller->initHandle();
 	stateTransition(IDLE);
 }
 

@@ -8,7 +8,7 @@
 #include "hyendOS/StateTransition/stateTranstion.h"
 
 Tasks* getTasks() {
-	return microcontroller->state->tasks;
+	return &microcontroller->state->tasks;
 }
 
 MC_State* getMCState(STATE_ID id){
@@ -30,9 +30,9 @@ uint8_t isStateHigher(STATE_ID stateID){
 
 void stateTransition(STATE_ID stateID){
 	if (isStateHigher(stateID)){
-		microcontroller->state->tasks->exit();
+		microcontroller->state->tasks.exit();
 		microcontroller->state = getMCState(stateID);
-		microcontroller->state->tasks->entry();
+		microcontroller->state->tasks.entry();
 	}
 }
 
