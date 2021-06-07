@@ -8,7 +8,7 @@
 #pragma once
 
 #define PERIPHERALS_LOGGER_LOGGER_H_
-#include "hyendOS/App/hyend_os_core.h"
+#include "connectivity/sd/SDfileHandling.h"
 
 /*
 typedef struct {

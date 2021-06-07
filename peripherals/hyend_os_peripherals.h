@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "connectivity/hyend_os_connectivity.h"
+#include "drivers/hyend_os_drivers.h"
 
-#include "peripherals/adc/ADS8688/App/ads8688.h"
+#include "peripherals/adc/ADS8688/ads8688.h"
 #include "peripherals/imu/BMI088.h"
