@@ -11,3 +11,4 @@
 
 #include "peripherals/adc/ADS8688/ads8688.h"
 #include "peripherals/imu/BMI088.h"
+#include "peripherals/pressure/MS5607.h"
