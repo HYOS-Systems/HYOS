@@ -16,5 +16,5 @@
 
 void voidMethod(void);
 
-void initHyendOS(MICROCONTROLLER);
+void HYOS_initHyendOS(MICROCONTROLLER);
 

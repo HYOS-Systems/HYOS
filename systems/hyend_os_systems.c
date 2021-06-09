@@ -17,44 +17,44 @@ void voidMethod() {
 	// Is empty, shall remain empty...
 }
 
-void initNULL_MCU() {
+void HYOS_initNULL_MCU() {
 	microcontroller->number = NULL_MCU;
 	microcontroller->master = NULL_MCU;
 }
 
-void initIFC() {
+void HYOS_initIFC(IFC_Test_PinStruct) {
 	microcontroller->number = IFC;
 	microcontroller->master = GSE;
 	// Insert Handle-Initialization here
 }
 
-void initFSMS() {
+void HYOS_initFSMS() {
 	microcontroller->number = FSMS;
 	microcontroller->master = IFC;
 	// Insert Handle-Initialization here
 }
 
-void initRSMS() {
+void HYOS_initRSMS() {
 	microcontroller->number = RSMS;
 	microcontroller->master = IFC;
 //	microcontroller->initHandle = &rsms_test_init;
 //	microcontroller->canNVICHandle = &rsms_test_canHandle;
 }
 
-void initVAS() {
+void HYOS_initVAS() {
 	microcontroller->number = VAS;
 	microcontroller->master = IFC;
 	// Insert Handle-Initialization here
 }
 
-void initGSE() {
+void HYOS_initGSE() {
 	microcontroller->number = GSE;
 	microcontroller->master = GSE;
 	GSE_init();
 	// Insert Handle-Initialization here
 }
 
-void initDefaultTask(Tasks* tasks){
+void HYOS_initDefaultTask(Tasks* tasks){
 	tasks->entry = &voidMethod;
 	tasks->whileHandle = &voidMethod;
 	tasks->exit = &voidMethod;
@@ -67,7 +67,7 @@ void initDefaultTask(Tasks* tasks){
 	tasks->foxtrotHandle = &voidMethod;
 }
 
-void initDefault() {
+void HYOS_initDefault() {
 	xprintf("Initializing MCs\n");
 
 	microcontroller = &mc;
@@ -98,7 +98,7 @@ void initDefault() {
  * Sets State to NULL_STATE
  * Calls State Transition to IDLE.
  */
-void initHyendOS(MICROCONTROLLER mc_ID) {
+void HYOS_initHyendOS(MICROCONTROLLER mc_ID) {
 	initDefault();
 
 	switch (mc_ID) {
