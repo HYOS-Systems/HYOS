@@ -5,7 +5,7 @@
  *      Author: Bayram
  */
 
-#include "hyendOS/hyend_os.h"
+#include "systems/hyend_os_systems.h"
 
 // Check for valid Initialization
 #ifdef INC_CCDH_H_
@@ -50,6 +50,7 @@ void initVAS() {
 void initGSE() {
 	microcontroller->number = GSE;
 	microcontroller->master = GSE;
+	GSE_init();
 	// Insert Handle-Initialization here
 }
 

@@ -13,11 +13,3 @@
 #include "connectivity/hyend_os_connectivity.h"
 
 #include "hyendOS/canProtocolImplementation/canProtocolImpl.h"
-
-
-#define INC_CCDH_H_
-
-void voidMethod(void);
-
-void initHyendOS(MICROCONTROLLER);
-

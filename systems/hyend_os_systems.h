@@ -7,7 +7,14 @@
 
 #pragma once
 
-#define HYEND_OS_SYSTEMS_H_
+#include "hyendOS/hyend_os.h"
 
+#include "systems/compass/hyend_os_compassSystems.h"
+#include "systems/test/hyend_os_testSystems.h"
 
+#define INC_CCDH_H_
+
+void voidMethod(void);
+
+void initHyendOS(MICROCONTROLLER);
 

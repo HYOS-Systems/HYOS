@@ -7,7 +7,6 @@
 
 #pragma once
 
-#define HYEND_OS_TEST_SYSTEMS_H_
-
-#include "hyendOS/systems/test/rsms/rsms_test.h"
-#include "hyendOS/systems/test/ifc/ifc_test.h"
+#include "systems/test/gse/gse_test.h"
+#include "systems/test/rsms/rsms_test.h"
+#include "systems/test/ifc/ifc_test.h"

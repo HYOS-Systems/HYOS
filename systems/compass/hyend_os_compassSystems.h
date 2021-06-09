@@ -5,9 +5,5 @@
  *      Author: Bayram
  */
 
-#ifndef SYSTEMS_COMPASS_HYEND_OS_COMPASSSYSTEMS_H_
-#define SYSTEMS_COMPASS_HYEND_OS_COMPASSSYSTEMS_H_
+#pragma once
 
-
-
-#endif /* SYSTEMS_COMPASS_HYEND_OS_COMPASSSYSTEMS_H_ */
