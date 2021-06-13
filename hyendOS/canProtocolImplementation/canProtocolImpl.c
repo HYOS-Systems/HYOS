@@ -42,15 +42,6 @@ void CANI_sendData(CANBus* bus, CANP_DataMessage* message){
 	CANI_sendMessage(bus, &(message->header), package.payload);
 }
 
-/*
-void CANI_sendState(CANBus* bus, StateMessage* message){
-	CANI_fillHeader(&message->header);
-
-	CANP_packState(&package, message);
-	CANI_sendMessage(bus, &(message->header), package.payload);
-}
-*/
-
 void CANI_sendRequestData(CANBus* bus, CANP_RequestDataMessage* message){
 	CANI_fillHeader(&message->header);
 
@@ -59,15 +50,6 @@ void CANI_sendRequestData(CANBus* bus, CANP_RequestDataMessage* message){
 	CANP_packRequestData(&package, message);
 	CANI_sendMessage(bus, &(message->header), package.payload);
 }
-
-/*
-void CANI_sendRequestState(CANBus* bus, StateMessage* message){
-	CANI_fillHeader(&message->header);
-
-	CANP_packRequestState(&package, message);
-	CANI_sendMessage(bus, &(message->header), package.payload);
-}
-*/
 
 void CANI_sendTransition(CANBus* bus, CANP_TransitionMessage* message){
 	CANI_fillHeader(&message->header);
@@ -78,8 +60,8 @@ void CANI_sendTransition(CANBus* bus, CANP_TransitionMessage* message){
 
 // Interpreting -----------------------------------------------------------------------------
 void CANI_interptetSingleDataFromMessage(CANP_Data* data, uint8_t* buffer, uint8_t startIndx){
-	data->status = buffer[startIndx] >> 4;
-	data->dataType = (0x0F & buffer[startIndx]) << 8 | buffer[startIndx + 1];
+	data->dataHeader.dataStatus = buffer[startIndx] >> 4;
+	data->dataHeader.dataType = (0x0F & buffer[startIndx]) << 8 | buffer[startIndx + 1];
 	data->payload = buffer[startIndx + 2] << 8 | buffer[startIndx + 3];
 }
 
@@ -104,24 +86,10 @@ void CANI_interpretDataMessage(CANBus* bus, CANP_DataMessage* message){
 	CANP_unpackDataMessage(&package, message);
 }
 
-/*
-void CANI_interpretStateMessage(CANBus* bus, StateMessage* message){
-	CANI_copyCANpackage(&package, bus);
-	CANP_unpackStateMessage(&package, message);
-}
-*/
-
 void CANI_interpretRequestDataMessage(CANBus* bus, CANP_RequestDataMessage* message){
 	CANI_copyCANpackage(&package, bus);
 	CANP_unpackRequestDataMessage(&package, message);
 }
-
-/*
-void CANI_interpretStateRequestMessage(CANBus* bus, StateMessage* message){
-	CANI_copyCANpackage(&package, bus);
-	CANP_unpackStateMessage(&package, message);
-}
-*/
 
 void CANI_interpretTransitionMessage(CANBus* bus, CANP_TransitionMessage* message){
 	CANI_copyCANpackage(&package, bus);
@@ -133,6 +101,10 @@ void CANI_interpretTransitionMessage(CANBus* bus, CANP_TransitionMessage* messag
 
 void CANI_unpackStatus(CANP_Data* data, CANP_Status* status) {
 	CANP_unpackStatus(data, status);
+}
+
+void CANI_packStatus(CANP_Data* data, CANP_Status* status) {
+	CANP_packStatus(data, status);
 }
 
 #endif

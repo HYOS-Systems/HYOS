@@ -30,13 +30,18 @@ typedef struct {
 
 typedef struct {
 	DATA_ID dataType;
-	DATA_STATUS status;
+	DATA_STATUS dataStatus;
+} CANP_DataHeader;
+
+typedef struct {
+	CANP_DataHeader dataHeader;
 	uint16_t payload;
 } CANP_Data;
 
 typedef struct {
+	CANP_DataHeader dataHeader;
 	MICROCONTROLLER mcu;
-	MCU_STATUS status;
+	MCU_STATUS mcuStatus;
 	STATE_ID state;
 } CANP_Status;
 
@@ -52,14 +57,6 @@ typedef struct {
 	CANP_Data data1;
 	CANP_Data data2;
 } CANP_DataMessage;
-
-/*
-typedef struct {
-	MessageHeader header;
-	MCU_STATUS status;
-	STATE_ID state;
-} StateMessage;
-*/
 
 typedef struct {
 	CANP_MessageHeader header;
@@ -77,15 +74,12 @@ typedef struct {
 MESSAGE_TYPE CANP_unpackHeader(CANP_Package *package, CANP_MessageHeader *mHeader);
 
 void CANP_packData(CANP_Package *package, CANP_DataMessage *message);
-//void CANP_packState(CANPackage *package, StateMessage *message);
 void CANP_packRequestData(CANP_Package *package, CANP_RequestDataMessage *message);
-//void CANP_packRequestState(CANPackage *package, StateMessage *message);
 void CANP_packTransition(CANP_Package *package, CANP_TransitionMessage *message);
 
 void CANP_unpackDataMessage(CANP_Package *package, CANP_DataMessage *message);
-//void CANP_unpackStateMessage(CANPackage *package, StateMessage *message);
-void CANP_unpackRequestDataMessage(CANP_Package *package, CANP_RequestDataMessage *message);
-//void CANP_unpackRequestStateMessage(CANPackage *package, StateMessage *message);
+void CANP_unpackRequestDataMessage(CANP_Package *package,CANP_RequestDataMessage *message);
 void CANP_unpackTransitionMessage(CANP_Package *package, CANP_TransitionMessage *message);
 
 void CANP_unpackStatus(CANP_Data*, CANP_Status*);
+void CANP_packStatus(CANP_Data*, CANP_Status*);
