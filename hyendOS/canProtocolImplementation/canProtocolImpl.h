@@ -14,16 +14,17 @@
 #define CANPROTOCOLIMPL_H_
 #endif
 
-MESSAGE_TYPE CANI_receiveMessage(CANBus*, MessageHeader*);
-uint8_t CANI_isThisTarget(MessageHeader*);
+MESSAGE_TYPE CANI_receiveMessage(CANBus*, CANP_MessageHeader*);
+uint8_t CANI_isThisTarget(CANP_MessageHeader*);
 
-void CANI_sendData(CANBus*, DataMessage*);
-void CANI_sendState(CANBus*, StateMessage*);
-void CANI_sendRequestData(CANBus*, RequestDataMessage*);
-void CANI_sendRequestState(CANBus*, StateMessage*);
+void CANI_sendData(CANBus*, CANP_DataMessage*);
+//void CANI_sendState(CANBus*, CANP_StateMessage*);
+void CANI_sendRequestData(CANBus*, CANP_RequestDataMessage*);
+//void CANI_sendRequestState(CANBus*, CANP_StateMessage*);
+void CANI_sendTransition(CANBus*, CANP_TransitionMessage*);
 
-void CANI_interpretDataMessage(CANBus*, DataMessage*);
-void CANI_interpretStateMessage(CANBus*, StateMessage*);
-void CANI_interpretRequestDataMessage(CANBus*, RequestDataMessage*);
-void CANI_interpretRequestStateMessage(CANBus*, StateMessage*);
-void CANI_interpretTransitionMessage(CANBus*, TransitionMessage*);
+void CANI_interpretDataMessage(CANBus*, CANP_DataMessage*);
+//void CANI_interpretStateMessage(CANBus*, CANP_StateMessage*);
+void CANI_interpretRequestDataMessage(CANBus*, CANP_RequestDataMessage*);
+//void CANI_interpretRequestStateMessage(CANBus*, CANP_StateMessage*);
+void CANI_interpretTransitionMessage(CANBus*, CANP_TransitionMessage*);

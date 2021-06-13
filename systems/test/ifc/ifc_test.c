@@ -9,48 +9,122 @@
 
 #ifdef HYENDOS_SYSTEMS_IFC_TEST_H_
 
-uint8_t buttonCounter = 0;
+IFC_Test_PinStruct *ifc_struct;
 
-void ifc_test_init(){
+// IDLE ====================================================================
+void ifc_test_IDLE_entry() {
+	IFC_TEST_blinkLED(ifc_struct->LD_Yellow);
+	IFC_TEST_orderTransition(IDLE);
 }
 
-void ifc_canHandle(CANBus* bus){
-	MessageHeader mHeader;
-	MESSAGE_TYPE mType = CANI_receiveMessage(bus, &mHeader);
-
-	if(!CANI_isThisTarget(&mHeader)){
-		return;
-	}
-
-	DataMessage dataMessage;
-	StateMessage stateMessage;
-	RequestDataMessage reqDataMessage;
-	StateMessage reqStateMessage;
-	TransitionMessage transitionMessage;
-
-	switch(mType){
-		case DATA:
-			CANI_interpretDataMessage(bus, &dataMessage);
-			/* Do stuff with dMessage */
-			break;
-		case STATUS:
-			CANI_interpretStateMessage(bus, &stateMessage);
-			/* Do stuff with sMessage */
-			break;
-		case REQUEST_DATA:
-			CANI_interpretRequestDataMessage(bus, &reqDataMessage);
-			//responseWithData(bus, &reqDataMessage);
-			break;
-		case REQUEST_STATUS:
-			CANI_interpretRequestStateMessage(bus, &reqStateMessage);
-			//responseWithState(bus, &reqStateMessage);
-			break;
-		case TRANSITION:
-			CANI_interpretTransitionMessage(bus, &transitionMessage);
-			break;
-		default:
-			break;
-	}
+void ifc_test_IDLE_while() {
+	HAL_GPIO_WritePin(ifc_struct->LD_Yellow.port, ifc_struct->LD_Yellow.pin,
+			GPIO_PIN_SET);
 }
+
+void ifc_test_IDLE_exit() {
+	IFC_TEST_blinkLED(ifc_struct->LD_Yellow);
+}
+
+// FUELING ====================================================================
+void ifc_test_FUELING_entry() {
+	IFC_TEST_blinkLED(ifc_struct->LD_Green);
+	IFC_TEST_orderTransition(FUELING);
+}
+
+void ifc_test_FUELING_while() {
+	HAL_GPIO_WritePin(ifc_struct->LD_Green.port, ifc_struct->LD_Green.pin,
+			GPIO_PIN_SET);
+}
+
+void ifc_test_FUELING_exit() {
+	IFC_TEST_blinkLED(ifc_struct->LD_Green);
+}
+
+// RDY_SET ====================================================================
+void ifc_test_RDY_SET_entry() {
+	IFC_TEST_blinkLED(ifc_struct->LD_Red);
+	IFC_TEST_orderTransition(RDY_SET);
+}
+
+void ifc_test_RDY_SET_while() {
+	HAL_GPIO_WritePin(ifc_struct->LD_Red.port, ifc_struct->LD_Red.pin,
+			GPIO_PIN_SET);
+}
+
+void ifc_test_RDY_SET_exit() {
+	IFC_TEST_blinkLED(ifc_struct->LD_Red);
+}
+
+// FLIGHT ====================================================================
+void ifc_test_FLIGHT_entry() {
+	IFC_TEST_blinkLED(ifc_struct->LD_Blue);
+	IFC_TEST_orderTransition(FLIGHT);
+}
+
+void ifc_test_FLIGHT_while() {
+	HAL_GPIO_WritePin(ifc_struct->LD_Blue.port, ifc_struct->LD_Blue.pin,
+			GPIO_PIN_SET);
+}
+
+void ifc_test_FLIGHT_exit() {
+	IFC_TEST_blinkLED(ifc_struct->LD_Blue);
+}
+
+// LANDED ====================================================================
+void ifc_test_LANDED_entry() {
+	IFC_TEST_blinkLED(ifc_struct->LD_White);
+	IFC_TEST_orderTransition(LANDED);
+}
+
+void ifc_test_LANDED_while() {
+	HAL_GPIO_WritePin(ifc_struct->LD_White.port, ifc_struct->LD_White.pin,
+			GPIO_PIN_SET);
+}
+
+void ifc_test_LANDED_exit() {
+	IFC_TEST_blinkLED(ifc_struct->LD_White);
+}
+
+// init ====================================================================
+void IFC_TEST_init(IFC_Test_PinStruct *ifc_test_struct) {
+	ifc_struct = ifc_test_struct;
+	IFC_TEST_tasks_init(ifc_test_struct);
+
+	// Init Microcontroller
+	initMicrocontroller();
+	microcontroller.number = IFC;
+	microcontroller.master = GSE;
+
+	Tasks *currentTasks;
+
+	currentTasks = &getMCState(IDLE)->tasks;
+	currentTasks->entry = &ifc_test_IDLE_entry;
+	currentTasks->whileHandle = &ifc_test_IDLE_while;
+	currentTasks->exit = &ifc_test_IDLE_exit;
+
+	currentTasks = &getMCState(FUELING)->tasks;
+	currentTasks->entry = &ifc_test_FUELING_entry;
+	currentTasks->whileHandle = &ifc_test_FUELING_while;
+	currentTasks->exit = &ifc_test_FUELING_exit;
+
+	currentTasks = &getMCState(RDY_SET)->tasks;
+	currentTasks->entry = &ifc_test_RDY_SET_entry;
+	currentTasks->whileHandle = &ifc_test_RDY_SET_while;
+	currentTasks->exit = &ifc_test_RDY_SET_exit;
+
+	currentTasks = &getMCState(FLIGHT)->tasks;
+	currentTasks->entry = &ifc_test_FLIGHT_entry;
+	currentTasks->whileHandle = &ifc_test_FLIGHT_while;
+	currentTasks->exit = &ifc_test_FLIGHT_exit;
+
+	currentTasks = &getMCState(LANDED)->tasks;
+	currentTasks->entry = &ifc_test_LANDED_entry;
+	currentTasks->whileHandle = &ifc_test_LANDED_while;
+	currentTasks->exit = &ifc_test_LANDED_exit;
+
+}
+
+
 
 #endif

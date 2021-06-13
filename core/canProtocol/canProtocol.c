@@ -20,32 +20,32 @@ static const uint32_t meTypeMask = 0x00000007;
 static const uint32_t timeFrMask = 0x000FFFFF;
 
 // Receiving -----------------------------------------------------------------------------
-MESSAGE_TYPE CANP_unpackHeader(CANPackage *package, MessageHeader *mHeader) {
+MESSAGE_TYPE CANP_unpackHeader(CANP_Package *package, CANP_MessageHeader *mHeader) {
 	uint32_t header = package->extID;
 	mHeader->sourceMCU = sourceMask & header >> sourceOffset;
 	mHeader->targetMCU = targetMask & header >> targetOffset;
 	mHeader->messageType = meTypeMask & header >> meTypeOffset;
-	mHeader->timestamp = timeFrMask & header >> timeFrOffset;
+	mHeader->timeStamp = timeFrMask & header >> timeFrOffset;
 	return mHeader->messageType;
 }
 
 // Sending -----------------------------------------------------------------------------
-uint32_t CANP_packHeader(MessageHeader *mHeader) {
+uint32_t CANP_packHeader(CANP_MessageHeader *mHeader) {
 	uint32_t header = (sourceMask & mHeader->sourceMCU << sourceOffset)
 			| (targetMask & mHeader->targetMCU << targetOffset)
 			| (meTypeMask & mHeader->messageType << meTypeOffset)
-			| (timeFrMask & mHeader->timestamp);
+			| (timeFrMask & mHeader->timeStamp);
 	return header;
 }
 
-void buildHalfPayload(uint8_t *payload, Data *data, uint8_t startIndx) {
+void buildHalfPayload(uint8_t *payload, CANP_Data *data, uint8_t startIndx) {
 	payload[startIndx + 0] = data->status << 4 | (0x0F & data->dataType >> 8);
 	payload[startIndx + 1] = 0xFF & data->dataType;
 	payload[startIndx + 2] = 0xFF & data->payload >> 8;
 	payload[startIndx + 3] = 0xFF & data->payload;
 }
 
-void CANP_packMessage(CANPackage *package, MessageHeader *mHeader, uint8_t *payload) {
+void CANP_packMessage(CANP_Package *package, CANP_MessageHeader *mHeader, uint8_t *payload) {
 	package->extID = CANP_packHeader(mHeader);
 
 	for (uint8_t i = 1; i < 8; i++) {
@@ -53,7 +53,7 @@ void CANP_packMessage(CANPackage *package, MessageHeader *mHeader, uint8_t *payl
 	}
 }
 
-void CANP_packData(CANPackage *package, DataMessage *message) {
+void CANP_packData(CANP_Package *package, CANP_DataMessage *message) {
 	message->header.messageType = DATA;
 
 	uint8_t payload[8];
@@ -63,7 +63,8 @@ void CANP_packData(CANPackage *package, DataMessage *message) {
 	CANP_packMessage(package, &(message->header), payload);
 }
 
-void CANP_packState(CANPackage *package, StateMessage *message) {
+/*
+void CANP_packStatus(CANPackage *package, StateMessage *message) {
 	message->header.messageType = STATUS;
 
 	uint8_t payload[8];
@@ -72,8 +73,9 @@ void CANP_packState(CANPackage *package, StateMessage *message) {
 
 	CANP_packMessage(package, &(message->header), payload);
 }
+*/
 
-void CANP_packRequestData(CANPackage *package, RequestDataMessage *message) {
+void CANP_packRequestData(CANP_Package *package, CANP_RequestDataMessage *message) {
 	message->header.messageType = REQUEST_DATA;
 
 	uint8_t payload[8];
@@ -89,6 +91,7 @@ void CANP_packRequestData(CANPackage *package, RequestDataMessage *message) {
 	CANP_packMessage(package, &(message->header), payload);
 }
 
+/*
 void CANP_packRequestState(CANPackage *package, StateMessage *message) {
 	message->header.messageType = REQUEST_STATUS;
 
@@ -98,38 +101,57 @@ void CANP_packRequestState(CANPackage *package, StateMessage *message) {
 
 	CANP_packMessage(package, &(message->header), payload);
 }
+*/
+
+void CANP_packTransition(CANP_Package *package, CANP_TransitionMessage *message) {
+	message->header.messageType = TRANSITION;
+
+	uint8_t payload[8];
+	payload[0] = (TRANSITION & 0x0F) | (TRANSITION << 4 | 0xF0);
+	payload[1] = payload[0];
+	payload[2] = message->state >> 8;
+	payload[3] = message->state;
+	payload[4] = payload[2];
+	payload[5] = payload[3];
+	payload[6] = payload[2];
+	payload[7] = payload[3];
+}
 
 // Interpreting -----------------------------------------------------------------------------
-void CANP_unpackSingleDataFromMessage(Data *data, uint8_t *buffer, uint8_t startIndx) {
+void CANP_unpackSingleDataFromMessage(CANP_Data *data, uint8_t *buffer, uint8_t startIndx) {
 	data->status = buffer[startIndx] >> 4;
 	data->dataType = (0x0F & buffer[startIndx]) << 8 | buffer[startIndx + 1];
 	data->payload = buffer[startIndx + 2] << 8 | buffer[startIndx + 3];
 }
 
-STATE_ID getStateIDfromMessage(CANPackage *package) {
+STATE_ID getStateIDfromMessage(CANP_Package *package) {
 	return (0xF & package->payload[6]) << 8 | package->payload[7];
 }
 
-void CANP_unpackDataMessage(CANPackage *package, DataMessage *message) {
+void CANP_unpackDataMessage(CANP_Package *package, CANP_DataMessage *message) {
 	CANP_unpackSingleDataFromMessage(&(message->data1), package->payload, 0);
 	CANP_unpackSingleDataFromMessage(&(message->data2), package->payload, 4);
 }
 
+/*
 void CANP_unpackStateMessage(CANPackage *package, StateMessage *message) {
 	message->state = getStateIDfromMessage(package);
 }
+*/
 
-void CANP_unpackRequestDataMessage(CANPackage *package, RequestDataMessage *message) {
+void CANP_unpackRequestDataMessage(CANP_Package *package, CANP_RequestDataMessage *message) {
 	message->state = getStateIDfromMessage(package);
 	message->dataID1 = (package->payload[0] & 0x0F) << 8 | package->payload[1];
 	message->dataID2 = (package->payload[4] & 0x0F) << 8 | package->payload[5];
 }
 
+/*
 void CANP_unpackRequestStateMessage(CANPackage *package, StateMessage *message) {
 	CANP_unpackStateMessage(package, message);
 }
+*/
 
-void CANP_unpackTransitionMessage(CANPackage *package, TransitionMessage *message) {
+void CANP_unpackTransitionMessage(CANP_Package *package, CANP_TransitionMessage *message) {
 	MESSAGE_TYPE dType1 = package->payload[0] >> 4;
 	MESSAGE_TYPE dType2 = package->payload[0] & 0x0F;
 	MESSAGE_TYPE dType3 = package->payload[1] >> 4;
@@ -146,6 +168,12 @@ void CANP_unpackTransitionMessage(CANPackage *package, TransitionMessage *messag
 
 	message->messageValid = firstHalfIsTransition && isStatesConsistent;
 	message->state = message->messageValid ? dType1 : NULL_STATE;
+}
+
+void CANP_unpackStatus(CANP_Data* data, CANP_Status* status) {
+	status->status = data->payload >> 8;
+	status->state = 0x00FF & data->payload;
+	status->mcu = status->status >> 5;
 }
 
 #endif

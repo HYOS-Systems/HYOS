@@ -9,44 +9,40 @@
 
 #define MCU_STATES_H_
 
+// Header ==============================================================
+typedef enum {
+	NULL_MCU = 0,
+	VAS = 1,
+	RSMS = 2,
+	FSMS = 3,
+	IFC = 4,
+	GSE = 5,
+	MAX_MCU = 7 // 3 bit
+} MICROCONTROLLER;
+
 typedef enum {
 	NULL_MESSAGE = 0,
 	TRANSITION = 1,
-	STATUS = 3,
-	REQUEST_STATUS,
-	DATA,
+//	STATUS = 3,
+//	REQUEST_STATUS,
+	DATA = 3,
 	REQUEST_DATA,
-	MAX_TYPE = 7
+	MAX_MESSAGE_TYPE = 7 // 3 bit
 } MESSAGE_TYPE;
 
+// Status ==============================================================
 typedef enum {
-	NULL_DATA = 0,
-	MCU,
-	GOPRO_1,
-	GOPRO_2,
-	GOPRO_3,
-	GOPRO_4,
-	GOPRO_5,
-	PICAM,
-	IMU_X,
-	IMU_Y,
-	IMU_Z,
-	IMU_VX,
-	IMU_VY,
-	IMU_VZ,
-	PRESSURE_1,
-	PRESSURE_2,
-	PRESSURE_3,
-	PT_1,
-	PT_2,
-	PT_3,
-	SD,
-	CAN,
-	CAN_1,
-	CAN_2,
-	CAN_3,
-	MAX_ID = 4095
-} DATA_ID;
+	SYSTEM_OK = 0,
+	VAS_OK = 32,
+	RSMS_OK = 64,
+	RSMS_SD_FAULT,
+	FSMS_OK = 96,
+	FSMS_SD_FAULT,
+	IFC_OK = 128,
+	IFC_SD_FAULT,
+	GSE_OK = 160,
+	MAX_STATUS_ERROR = 255 // 8 bit
+} MCU_STATUS;
 
 typedef enum {
 	NULL_STATE = 0,
@@ -61,15 +57,55 @@ typedef enum {
 	FLIGHT,
 	LANDED,
 	STATE_ID_END
-} STATE_ID;
+} STATE_ID; // 16 bit
+
+// Data ==============================================================
+typedef enum {
+	DATA_OK,
+	DATA_DEPRECATED,
+	DATA_NOT_AVAILABLE,
+	DATA_ERROR,
+	DATA_STATUS_MAX = 15 // 4 bit
+} DATA_STATUS;
 
 typedef enum {
-	NULL_MCU = 0,
-	VAS,
-	RSMS,
-	FSMS,
-	IFC,
-	GSE,
-	MAX_MCU = 7
-} MICROCONTROLLER;
+	SYSTEM_NULL_DATA = 0,
+	MCU,
+	VAS_NULL_DATA =  VAS << 9, // 512
+	VAS_STATUS,
+	VAS_GOPRO_1,
+	VAS_GOPRO_2,
+	VAS_GOPRO_3,
+	VAS_GOPRO_4,
+	VAS_GOPRO_5,
+	VAS_PICAM,
+	FSMS_NULL_DATA = FSMS << 9, // 1024
+	FSMS_STATUS,
+	FSMS_PRESSURE,
+	FSMS_IMU_X,
+	FSMS_IMU_Y,
+	FSMS_IMU_Z,
+	FSMS_IMU_VX,
+	FSMS_IMU_VY,
+	FSMS_IMU_VZ,
+	RSMS_NULL_DATA = RSMS << 9, // 1536
+	RSMS_STATUS,
+	RSMS_PRESSURE_1,
+	RSMS_PRESSURE_2,
+	RSMS_PRESSURE_3,
+	RSMS_PRESSURE_4,
+	RSMS_PT_1,
+	RSMS_PT_2,
+	RSMS_PT_3,
+	RSMS_PT_4,
+	RSMS_PT_5,
+	RSMS_PT_6,
+	RSMS_PT_7,
+	RSMS_PT_8,
+	IFC_NULL_DATA = IFC << 9, // 2048
+	IFC_STATUS,
+	GSE_NULL_DATA = GSE << 9, // 2560
+	GSE_STATUS,
+	MAX_DATA_ID = 4095 // 12 bit
+} DATA_ID;
 

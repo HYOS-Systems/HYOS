@@ -22,65 +22,70 @@
 //typedef long unsigned long uint64_t;
 // ----------------------------------------------------------
 
-typedef enum {
-	DATA_OK = 0,
-	DATA_OLD,
-	DATA_MAX = 15
-} DATA_STATUS;
-
 typedef struct {
 	uint32_t extID;
 	uint8_t payload[8];
 	uint8_t dlc;
-} CANPackage;
+} CANP_Package;
 
 typedef struct {
 	DATA_ID dataType;
 	DATA_STATUS status;
 	uint16_t payload;
-} Data;
+} CANP_Data;
+
+typedef struct {
+	MICROCONTROLLER mcu;
+	MCU_STATUS status;
+	STATE_ID state;
+} CANP_Status;
 
 typedef struct {
 	MICROCONTROLLER sourceMCU;
 	MICROCONTROLLER targetMCU;
 	MESSAGE_TYPE messageType;
-	uint16_t timestamp;
-} MessageHeader;
+	uint32_t timeStamp;
+} CANP_MessageHeader;
 
 typedef struct {
-	MessageHeader header;
-	Data data1;
-	Data data2;
-} DataMessage;
+	CANP_MessageHeader header;
+	CANP_Data data1;
+	CANP_Data data2;
+} CANP_DataMessage;
 
+/*
 typedef struct {
 	MessageHeader header;
+	MCU_STATUS status;
 	STATE_ID state;
 } StateMessage;
+*/
 
 typedef struct {
-	MessageHeader header;
+	CANP_MessageHeader header;
 	DATA_ID dataID1;
 	DATA_ID dataID2;
 	STATE_ID state;
-} RequestDataMessage;
+} CANP_RequestDataMessage;
 
 typedef struct {
-	MessageHeader header;
+	CANP_MessageHeader header;
 	STATE_ID state;
 	uint8_t messageValid;
-} TransitionMessage;
+} CANP_TransitionMessage;
 
-MESSAGE_TYPE CANP_unpackHeader(CANPackage *package, MessageHeader *mHeader);
+MESSAGE_TYPE CANP_unpackHeader(CANP_Package *package, CANP_MessageHeader *mHeader);
 
-void CANP_packData(CANPackage *package, DataMessage *message);
-void CANP_packState(CANPackage *package, StateMessage *message);
-void CANP_packRequestData(CANPackage *package, RequestDataMessage *message);
-void CANP_packRequestState(CANPackage *package, StateMessage *message);
-void CANP_packStateTransitionMessage(CANPackage *package, TransitionMessage *message);
+void CANP_packData(CANP_Package *package, CANP_DataMessage *message);
+//void CANP_packState(CANPackage *package, StateMessage *message);
+void CANP_packRequestData(CANP_Package *package, CANP_RequestDataMessage *message);
+//void CANP_packRequestState(CANPackage *package, StateMessage *message);
+void CANP_packTransition(CANP_Package *package, CANP_TransitionMessage *message);
 
-void CANP_unpackDataMessage(CANPackage *package, DataMessage *message);
-void CANP_unpackStateMessage(CANPackage *package, StateMessage *message);
-void CANP_unpackRequestDataMessage(CANPackage *package, RequestDataMessage *message);
-void CANP_unpackRequestStateMessage(CANPackage *package, StateMessage *message);
-void CANP_unpackTransitionMessage(CANPackage *package, TransitionMessage *message);
+void CANP_unpackDataMessage(CANP_Package *package, CANP_DataMessage *message);
+//void CANP_unpackStateMessage(CANPackage *package, StateMessage *message);
+void CANP_unpackRequestDataMessage(CANP_Package *package, CANP_RequestDataMessage *message);
+//void CANP_unpackRequestStateMessage(CANPackage *package, StateMessage *message);
+void CANP_unpackTransitionMessage(CANP_Package *package, CANP_TransitionMessage *message);
+
+void CANP_unpackStatus(CANP_Data*, CANP_Status*);

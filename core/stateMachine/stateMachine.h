@@ -36,10 +36,11 @@ typedef struct {
 	MC_State mcStates[STATE_ID_END];
 } Microcontroller;
 
-MC_State voidMCState;
+Microcontroller microcontroller;
 
-Microcontroller *microcontroller;
+void voidMethod(void);
+void stateTransition(STATE_ID);
+void initMicrocontroller(void);
 
 MC_State* getMCState(STATE_ID);
 Tasks* getTasks(void);
-void stateTransition(STATE_ID);

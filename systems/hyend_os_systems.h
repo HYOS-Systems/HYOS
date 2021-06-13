@@ -14,7 +14,6 @@
 
 #define INC_CCDH_H_
 
-void voidMethod(void);
 
-void HYOS_initHyendOS(MICROCONTROLLER);
+void HYOS_start(void);
 
