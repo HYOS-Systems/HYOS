@@ -32,7 +32,7 @@ typedef struct {
 /* MS5607 Data Structure */
 typedef struct {
 	void (*DelayMs)(uint32_t delayMS);
-	void (*Write)(uint8_t* pTxData, uint8_t* pRxData);
+	void (*Write)(uint8_t* pTxData, uint8_t* pRxData, uint16_t size);
 	void (*Power)(void);
 	void (*Select)(void);
 	void (*Deselect)(void);
@@ -44,7 +44,7 @@ typedef struct {
 // Prototypes:
 ms5607_type constructMS5607(
 	void (*delay)(uint32_t),
-	void (*write)(uint8_t*, uint8_t*),
+	void (*write)(uint8_t*, uint8_t*, uint16_t),
 	void (*power)(void),
 	void (*select)(void),
 	void (*deselect)(void)

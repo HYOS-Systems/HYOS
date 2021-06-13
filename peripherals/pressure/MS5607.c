@@ -9,7 +9,7 @@
 
 ms5607_type constructMS5607(
 	void (*delay)(uint32_t),
-	void (*write)(uint8_t*, uint8_t*),
+	void (*write)(uint8_t*, uint8_t*, uint16_t),
 	void (*power)(void),
 	void (*select)(void),
 	void (*deselect)(void))
@@ -33,9 +33,10 @@ void prom_read(ms5607_type *ms5607){
   for (address = 0; address < 8; address++) {
     uint8_t txData = PROM_READ(address);
     ms5607->Select();
-    ms5607->Write(&txData, rxData);
+    ms5607->Write(&txData, rxData, 3);
     ms5607->Deselect();
     promList[address] = (rxData[0] << 8) | rxData[2];
+    ms5607->DelayMs(10);
   }
 
   promData.reserved = promList[0];
@@ -47,7 +48,6 @@ void prom_read(ms5607_type *ms5607){
   promData.tempsens = promList[6];
   promData.crc = promList[7];
   ms5607->PROM = promData;
-
 }
 
 /** Reset and prepare for general usage.
@@ -56,10 +56,11 @@ void prom_read(ms5607_type *ms5607){
  */
 void ms5607_power_up(ms5607_type * ms5607){
     ms5607->Power();
+    ms5607->DelayMs(10);
     uint8_t txData = RESET_COMMAND;
     uint8_t rxData[1];
     ms5607->Select();
-    ms5607->Write(&txData, rxData);
+    ms5607->Write(&txData, rxData, 1);
     ms5607->DelayMs(3);
     ms5607->Deselect();
     prom_read(ms5607);
