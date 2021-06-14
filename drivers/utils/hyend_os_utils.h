@@ -7,5 +7,6 @@
 
 #pragma once
 
+#include "drivers/utils/bitshifts/intmasks.h"
 #include "drivers/utils/xprintf/xprintf.h"
 #include "drivers/utils/strings/StringUtils.h"

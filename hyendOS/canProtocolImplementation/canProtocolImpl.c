@@ -13,12 +13,10 @@ CANP_Package package;
 uint8_t i;
 
 // Receiving -----------------------------------------------------------------------------
-MESSAGE_TYPE CANI_receiveMessage(CANBus* bus, CANP_MessageHeader* mHeader){
+void CANI_receiveMessage(CANBus* bus, CANP_MessageHeader* mHeader){
 	CAN_ReceiveMessage(bus);
 	package.extID = bus->pRxHeader.ExtId;
 	CANP_unpackHeader(&package, mHeader);
-
-	return mHeader->messageType;
 }
 
 uint8_t CANI_isThisTarget(CANP_MessageHeader* mHeader){
@@ -59,12 +57,6 @@ void CANI_sendTransition(CANBus* bus, CANP_TransitionMessage* message){
 }
 
 // Interpreting -----------------------------------------------------------------------------
-void CANI_interptetSingleDataFromMessage(CANP_Data* data, uint8_t* buffer, uint8_t startIndx){
-	data->dataHeader.dataStatus = buffer[startIndx] >> 4;
-	data->dataHeader.dataType = (0x0F & buffer[startIndx]) << 8 | buffer[startIndx + 1];
-	data->payload = buffer[startIndx + 2] << 8 | buffer[startIndx + 3];
-}
-
 uint8_t CANI_isMaster(CANP_MessageHeader* mHeader){
 	return mHeader->sourceMCU == microcontroller.master;
 }

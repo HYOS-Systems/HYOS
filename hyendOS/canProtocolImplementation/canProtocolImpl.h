@@ -14,7 +14,7 @@
 #define CANPROTOCOLIMPL_H_
 #endif
 
-MESSAGE_TYPE CANI_receiveMessage(CANBus*, CANP_MessageHeader*);
+void CANI_receiveMessage(CANBus*, CANP_MessageHeader*);
 uint8_t CANI_isThisTarget(CANP_MessageHeader*);
 
 void CANI_sendData(CANBus*, CANP_DataMessage*);

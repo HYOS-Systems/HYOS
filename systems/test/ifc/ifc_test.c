@@ -101,28 +101,32 @@ void IFC_TEST_init(IFC_Test_PinStruct *ifc_test_struct) {
 	currentTasks = &getMCState(IDLE)->tasks;
 	currentTasks->entry = &ifc_test_IDLE_entry;
 	currentTasks->whileHandle = &ifc_test_IDLE_while;
+	currentTasks->canHandle = &IFC_TEST_canHandle;
 	currentTasks->exit = &ifc_test_IDLE_exit;
 
 	currentTasks = &getMCState(FUELING)->tasks;
 	currentTasks->entry = &ifc_test_FUELING_entry;
 	currentTasks->whileHandle = &ifc_test_FUELING_while;
+	currentTasks->canHandle = &IFC_TEST_canHandle;
 	currentTasks->exit = &ifc_test_FUELING_exit;
 
 	currentTasks = &getMCState(RDY_SET)->tasks;
 	currentTasks->entry = &ifc_test_RDY_SET_entry;
 	currentTasks->whileHandle = &ifc_test_RDY_SET_while;
+	currentTasks->canHandle = &IFC_TEST_canHandle;
 	currentTasks->exit = &ifc_test_RDY_SET_exit;
 
 	currentTasks = &getMCState(FLIGHT)->tasks;
 	currentTasks->entry = &ifc_test_FLIGHT_entry;
 	currentTasks->whileHandle = &ifc_test_FLIGHT_while;
+	currentTasks->canHandle = &IFC_TEST_canHandle;
 	currentTasks->exit = &ifc_test_FLIGHT_exit;
 
 	currentTasks = &getMCState(LANDED)->tasks;
 	currentTasks->entry = &ifc_test_LANDED_entry;
 	currentTasks->whileHandle = &ifc_test_LANDED_while;
+	currentTasks->canHandle = &IFC_TEST_canHandle;
 	currentTasks->exit = &ifc_test_LANDED_exit;
-
 }
 
 

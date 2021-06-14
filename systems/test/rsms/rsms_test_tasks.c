@@ -5,19 +5,18 @@
  *      Author: Bayram
  */
 
-#include "systems/test/ifc/ifc_test_tasks.h"
+#include "systems/test/rsms/rsms_test_tasks.h"
 
-uint16_t ifc_blinkPeriod = 500;
-uint8_t ifc_blinkCount = 3;
+uint16_t rsms_blinkPeriod = 500;
+uint8_t rsms_blinkCount = 3;
 
-CANP_TransitionMessage ifc_transitionOrder;
-IFC_Test_PinStruct *ifc_struct;
+RSMS_Test_PinStruct *rsms_struct;
 
-uint32_t IFC_TEST_logTime() {
+uint32_t RSMS_TEST_logTime() {
 	return HAL_GetTick();
 }
 
-void IFC_TEST_canHandle(void *busPointer) {
+void RSMS_TEST_canHandle(void *busPointer) {
 	CANBus* bus = (CANBus*) busPointer;
 	CANP_MessageHeader header;
 	CANI_receiveMessage(bus, &header);
@@ -47,24 +46,15 @@ void IFC_TEST_canHandle(void *busPointer) {
 	}
 }
 
-void IFC_TEST_orderTransition(STATE_ID state) {
-	ifc_transitionOrder.header.timeStamp = IFC_TEST_logTime();
-	ifc_transitionOrder.state = state;
-	CANI_sendTransition(ifc_struct->systemsBus, &ifc_transitionOrder);
-}
-
-void IFC_TEST_blinkLED(IFC_LD_TypeDef ld) {
+void RSMS_TEST_blinkLED(RSMS_LD_TypeDef ld) {
 	HAL_GPIO_WritePin(ld.port, ld.pin, GPIO_PIN_SET);
-	for (uint8_t i = 0; i < ifc_blinkCount * 2 - 1; i++) {
-		HAL_Delay(ifc_blinkPeriod);
+	for (uint8_t i = 0; i < rsms_blinkCount * 2 - 1; i++) {
+		HAL_Delay(rsms_blinkPeriod);
 		HAL_GPIO_TogglePin(ld.port, ld.pin);
 	}
 }
 
-void IFC_TEST_tasks_init(IFC_Test_PinStruct *ifc_test_struct) {
-	ifc_struct = ifc_test_struct;
-	ifc_transitionOrder.messageValid = 1;
-	ifc_transitionOrder.state = NULL_STATE;
-	ifc_transitionOrder.header.targetMCU = MAX_MCU;
+void RSMS_TEST_tasks_init(RSMS_Test_PinStruct *rsms_test_struct) {
+	rsms_struct = rsms_test_struct;
 }
 

@@ -7,15 +7,8 @@
 #pragma once
 
 #include "hyendOS/hyend_os.h"
+#include "systems/test/rsms/rsms_test_tasks.h"
 
-#if 0
-#ifdef __STM32_SPI_PERIPHERAL
 #define HYENDOS_SYSTEMS_RSMS_TEST_H_
 
-void rsms_test_init(void);
-void rsms_test_canHandle(CANBus*);
-
-//void rsms_init(Microcontroller*);
-#endif
-#endif
-
+void RSMS_TEST_init(RSMS_Test_PinStruct*);

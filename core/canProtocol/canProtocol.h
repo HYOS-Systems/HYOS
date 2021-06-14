@@ -40,14 +40,14 @@ typedef struct {
 
 typedef struct {
 	CANP_DataHeader dataHeader;
-	MICROCONTROLLER mcu;
+	MCU_ID mcu;
 	MCU_STATUS mcuStatus;
 	STATE_ID state;
 } CANP_Status;
 
 typedef struct {
-	MICROCONTROLLER sourceMCU;
-	MICROCONTROLLER targetMCU;
+	MCU_ID sourceMCU;
+	MCU_ID targetMCU;
 	MESSAGE_TYPE messageType;
 	uint32_t timeStamp;
 } CANP_MessageHeader;
@@ -71,7 +71,7 @@ typedef struct {
 	uint8_t messageValid;
 } CANP_TransitionMessage;
 
-MESSAGE_TYPE CANP_unpackHeader(CANP_Package *package, CANP_MessageHeader *mHeader);
+void CANP_unpackHeader(CANP_Package *package, CANP_MessageHeader *mHeader);
 
 void CANP_packData(CANP_Package *package, CANP_DataMessage *message);
 void CANP_packRequestData(CANP_Package *package, CANP_RequestDataMessage *message);
