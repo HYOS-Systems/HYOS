@@ -59,7 +59,7 @@ void fsms_test_FLIGHT_entry() {
 }
 
 void fsms_test_FLIGHT_while() {
-	FAL_GPIO_WritePin(fsms_struct->LD_Blue.port, fsms_struct->LD_Blue.pin,
+	HAL_GPIO_WritePin(fsms_struct->LD_Blue.port, fsms_struct->LD_Blue.pin,
 			GPIO_PIN_SET);
 }
 

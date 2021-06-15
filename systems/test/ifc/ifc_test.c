@@ -98,19 +98,19 @@ void IFC_TEST_init(IFC_Test_PinStruct *ifc_test_struct) {
 
 	Tasks *currentTasks;
 
-	currentTasks = &getMCState(IDLE)->tasks;
+	currentTasks = &(getMCState(IDLE)->tasks);
 	currentTasks->entry = &ifc_test_IDLE_entry;
 	currentTasks->whileHandle = &ifc_test_IDLE_while;
 	currentTasks->canHandle = &IFC_TEST_canHandle;
 	currentTasks->exit = &ifc_test_IDLE_exit;
 
-	currentTasks = &getMCState(FUELING)->tasks;
+	currentTasks = &(getMCState(FUELING)->tasks);
 	currentTasks->entry = &ifc_test_FUELING_entry;
 	currentTasks->whileHandle = &ifc_test_FUELING_while;
 	currentTasks->canHandle = &IFC_TEST_canHandle;
 	currentTasks->exit = &ifc_test_FUELING_exit;
 
-	currentTasks = &getMCState(RDY_SET)->tasks;
+	currentTasks = &(getMCState(RDY_SET)->tasks);
 	currentTasks->entry = &ifc_test_RDY_SET_entry;
 	currentTasks->whileHandle = &ifc_test_RDY_SET_while;
 	currentTasks->canHandle = &IFC_TEST_canHandle;

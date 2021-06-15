@@ -18,6 +18,7 @@ uint32_t IFC_TEST_logTime() {
 }
 
 void IFC_TEST_canHandle(void *busPointer) {
+	xprintf("Call Of CAN-Handle\n");
 	CANBus* bus = (CANBus*) busPointer;
 	CANP_MessageHeader header;
 	CANI_receiveMessage(bus, &header);
