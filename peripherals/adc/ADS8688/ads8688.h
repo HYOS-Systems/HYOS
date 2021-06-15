@@ -15,7 +15,6 @@
 #define INC_ADS8688_H_
 
 #include <stdio.h>
-//#include "connectivity/sd/App/SDfileHandling.h"
 #include "spi.h"
 
 typedef enum {
