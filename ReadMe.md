@@ -18,7 +18,7 @@
 			2. Make sure that on the left under "Languages" the "GNU C" is selected
 			3. Hit "Add...", then "Workspace..."
 			4. Unfold your Project Folder. Select your HyEnD_OS LibFolder on the second-highest level; hit "OK", "OK" 
-	2. Hit "Apply and Close"; rebuild your project
+	2. Hit "Apply and Close"; rebuild your project (If you get an error inside /connectivity/sd/ you might need to select Middleware -> FATFS -> SD CARD in 	your .ioc file first)
 	
 2. Confirm if HyEnD_OS Folder is added
 	1. Navigate to "Resource - Linked Resources" and click the "Linked Resources" Tab
