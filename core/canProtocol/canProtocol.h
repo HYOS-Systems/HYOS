@@ -29,17 +29,17 @@ typedef struct {
 } CANP_Package;
 
 typedef struct {
-	DATA_ID dataType;
-	DATA_STATUS dataStatus;
+	DATA_ID ID;
+	DATA_STATUS status;
 } CANP_DataHeader;
 
 typedef struct {
-	CANP_DataHeader dataHeader;
+	CANP_DataHeader header;
 	uint16_t payload;
 } CANP_Data;
 
 typedef struct {
-	CANP_DataHeader dataHeader;
+	CANP_DataHeader header;
 	MCU_ID mcu;
 	MCU_STATUS mcuStatus;
 	STATE_ID state;

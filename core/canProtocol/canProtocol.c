@@ -30,8 +30,8 @@ uint32_t CANP_packHeader(CANP_MessageHeader *mHeader) {
 }
 
 void buildHalfPayload(uint8_t *payload, CANP_Data *data, uint8_t startIndx) {
-	payload[startIndx + 0] = data->dataHeader.dataStatus << 4 | (mask_04bit & data->dataHeader.dataType >> 8);
-	payload[startIndx + 1] = data->dataHeader.dataType;
+	payload[startIndx + 0] = data->header.status << 4 | (mask_04bit & data->header.ID >> 8);
+	payload[startIndx + 1] = data->header.ID;
 	payload[startIndx + 2] = data->payload >> 8;
 	payload[startIndx + 3] = data->payload;
 }
@@ -76,8 +76,8 @@ void CANP_unpackHeader(CANP_Package *package, CANP_MessageHeader *mHeader) {
 }
 
 void CANP_unpackSingleDataFromMessage(CANP_Data *data, uint8_t *buffer, uint8_t startIndx) {
-	data->dataHeader.dataStatus = buffer[startIndx] >> 4 & mask_04bit;
-	data->dataHeader.dataType = (mask_04bit & buffer[startIndx]) << 8 | buffer[startIndx + 1];
+	data->header.status = buffer[startIndx] >> 4 & mask_04bit;
+	data->header.ID = (mask_04bit & buffer[startIndx]) << 8 | buffer[startIndx + 1];
 	data->payload = buffer[startIndx + 2] << 8 | buffer[startIndx + 3];
 }
 
@@ -96,16 +96,16 @@ void CANP_unpackRequestDataMessage(CANP_Package *package, CANP_RequestDataMessag
 
 void CANP_unpackTransitionMessage(CANP_Package *package, CANP_TransitionMessage *message) {
 	CANP_unpackHeader(package, (CANP_MessageHeader*) message);
-	MESSAGE_TYPE dType1 = package->payload[0] >> 4;
-	MESSAGE_TYPE dType2 = package->payload[0] & mask_04bit;
-	MESSAGE_TYPE dType3 = package->payload[1] >> 4;
-	MESSAGE_TYPE dType4 = package->payload[1] & mask_04bit;
+	MESSAGE_TYPE mType1 = package->payload[0] >> 4;
+	MESSAGE_TYPE mType2 = package->payload[0] & mask_04bit;
+	MESSAGE_TYPE mType3 = package->payload[1] >> 4;
+	MESSAGE_TYPE mType4 = package->payload[1] & mask_04bit;
 
 	uint8_t firstHalfIsTransition = 1;
-	firstHalfIsTransition = firstHalfIsTransition && dType1 == TRANSITION;
-	firstHalfIsTransition = firstHalfIsTransition && dType2 == TRANSITION;
-	firstHalfIsTransition = firstHalfIsTransition && dType3 == TRANSITION;
-	firstHalfIsTransition = firstHalfIsTransition && dType4 == TRANSITION;
+	firstHalfIsTransition = firstHalfIsTransition && mType1 == TRANSITION;
+	firstHalfIsTransition = firstHalfIsTransition && mType2 == TRANSITION;
+	firstHalfIsTransition = firstHalfIsTransition && mType3 == TRANSITION;
+	firstHalfIsTransition = firstHalfIsTransition && mType4 == TRANSITION;
 
 	STATE_ID state1 = package->payload[2];
 	STATE_ID state2 = package->payload[3];
@@ -114,23 +114,23 @@ void CANP_unpackTransitionMessage(CANP_Package *package, CANP_TransitionMessage 
 	uint8_t isStatesConsistent = state1 == state2 && state2 == state3;
 
 	message->messageValid = firstHalfIsTransition && isStatesConsistent;
-	message->state = message->messageValid ? dType1 : NULL_STATE;
+	message->state = message->messageValid ? state1 : NULL_STATE;
 }
 
 void CANP_unpackStatus(CANP_Data *data, CANP_Status *status) {
-	status->dataHeader = data->dataHeader;
+	status->header = data->header;
 	status->mcuStatus = data->payload >> 8;
 	status->state = mask_08bit & data->payload;
 	status->mcu = status->mcuStatus >> 5;
 }
 
 void CANP_packStatus(CANP_Data *data, CANP_Status *status) {
-	data->dataHeader = status->dataHeader;
+	data->header = status->header;
 	data->payload = status->mcuStatus << 8 | status->state;
 }
 
 uint8_t CANP_isStatusData(CANP_Data *data) {
-	return (data->dataHeader.dataType & mask_09bit) & 0x0001;
+	return (data->header.ID & mask_09bit) & 0x0001;
 }
 
 #endif
