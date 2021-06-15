@@ -14,6 +14,7 @@
 typedef struct {
 	void (*entry)(void);
 	void (*whileHandle)(void);
+	void (*canHandle)(void*);
 	void (*exit)(void);
 
 	void (*alfaHandle)(void);
@@ -31,8 +32,8 @@ typedef struct {
 
 typedef struct {
 	MC_State *state;
-	MICROCONTROLLER number;
-	MICROCONTROLLER master;
+	MCU_ID number;
+	MCU_ID master;
 	MC_State mcStates[STATE_ID_END];
 } Microcontroller;
 

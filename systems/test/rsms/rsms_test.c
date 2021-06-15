@@ -5,105 +5,125 @@
  *      Author: Bayram
  */
 
-#include <systems/test/rsms/rsms_test.h>
+#include "systems/test/rsms/rsms_test.h"
 
 #ifdef HYENDOS_SYSTEMS_RSMS_TEST_H_
 
-ADS_8688 adc1;
-ADS_8688 adc2;
-//Tasks idle_tasks;
+RSMS_Test_PinStruct *rsms_struct;
 
-void rsms_test_init() {
-	initXprint(&huart2);
-	init_CAN(&hcan3, 0x111);
-
-	adc1.hspi = &hspi1;
-	adc1.cs_pin = SPI1_CS_Pin;
-	adc1.cs_port = SPI1_CS_GPIO_Port;
-	adc1.active_pins = 0b00000011;
-	adc1.input_range = ZT1V25;
-
-	adc2.hspi = &hspi2;
-	adc2.cs_pin = SPI2_CS_Pin;
-	adc2.cs_port = SPI2_CS_GPIO_Port;
-	adc2.active_pins = 0b11000011;
-	adc2.input_range = ZT1V25;
-
-	initADC(&adc1);
-	initADC(&adc2);
-	xprintf("RSMS Initialisiert.\n");
+// IDLE ====================================================================
+void rsms_test_IDLE_entry() {
+	RSMS_TEST_blinkLED(rsms_struct->LD_Yellow);
 }
 
-void rsms_responseWithData(CANBus *bus) {
-	DataMessage message;
-
-//	message.header.sourceMCU = microcontroller->number;
-	message.header.targetMCU = IFC;
-//	message.header.messageType = DATA;
-	message.header.timestamp = (uint16_t) HAL_GetTick();
-
-	message.data1.status = DATA_OK;
-	message.data1.dataType = IMU_VZ;
-	message.data1.payload = 0xFFFF;
-
-	message.data2.status = DATA_OLD;
-	message.data2.dataType = IMU_VY;
-	message.data2.payload = 0xFFFF;
-
-	sendData(bus, &message);
+void rsms_test_IDLE_while() {
+	HAL_GPIO_WritePin(rsms_struct->LD_Yellow.port, rsms_struct->LD_Yellow.pin,
+			GPIO_PIN_SET);
 }
 
-void rsms_test_responseWithState(CANBus *bus) {
-	StateMessage message;
-
-	message.header.targetMCU = IFC;
-	message.header.timestamp = (uint16_t) HAL_GetTick();
-
-	message.state = microcontroller->state->stateID;
-
-	sendState(bus, &message);
+void rsms_test_IDLE_exit() {
+	RSMS_TEST_blinkLED(rsms_struct->LD_Yellow);
 }
 
-void rsms_test_canHandle(CANBus *bus) {
-	/*
-	 * CAN_Handler Struct necessary?
-	 */
-
-	MessageHeader mHeader;
-	MESSAGE_TYPE mType = receiveMessage(bus, &mHeader);
-
-	if (!isThisTarget(&mHeader)) {
-		return;
-	}
-
-	DataMessage dataMessage;
-	StateMessage stateMessage;
-	RequestDataMessage reqDataMessage;
-	StateMessage reqStateMessage;
-
-	switch (mType) {
-	case DATA:
-		interpretDataMessage(bus, &dataMessage);
-		/* Do stuff with dMessage */
-		break;
-	case STATUS:
-		interpretStateMessage(bus, &stateMessage);
-		/* Do stuff with sMessage */
-		break;
-	case REQUEST_DATA:
-		interpretRequestDataMessage(bus, &reqDataMessage);
-		//responseWithData(bus);
-		break;
-	case REQUEST_STATUS:
-		interpretRequestStateMessage(bus, &reqStateMessage);
-		//responseWithState(bus);
-		break;
-	case TRANSITION:
-		interpretStateTransitionMessage(bus, &mHeader);
-		break;
-	default:
-		break;
-	}
+// FUELING ====================================================================
+void rsms_test_FUELING_entry() {
+	RSMS_TEST_blinkLED(rsms_struct->LD_Green);
 }
+
+void rsms_test_FUELING_while() {
+	HAL_GPIO_WritePin(rsms_struct->LD_Green.port, rsms_struct->LD_Green.pin,
+			GPIO_PIN_SET);
+}
+
+void rsms_test_FUELING_exit() {
+	RSMS_TEST_blinkLED(rsms_struct->LD_Green);
+}
+
+// RDY_SET ====================================================================
+void rsms_test_RDY_SET_entry() {
+	RSMS_TEST_blinkLED(rsms_struct->LD_Red);
+}
+
+void rsms_test_RDY_SET_while() {
+	HAL_GPIO_WritePin(rsms_struct->LD_Red.port, rsms_struct->LD_Red.pin,
+			GPIO_PIN_SET);
+}
+
+void rsms_test_RDY_SET_exit() {
+	RSMS_TEST_blinkLED(rsms_struct->LD_Red);
+}
+
+// FLIGHT ====================================================================
+void rsms_test_FLIGHT_entry() {
+	RSMS_TEST_blinkLED(rsms_struct->LD_Blue);
+}
+
+void rsms_test_FLIGHT_while() {
+	HAL_GPIO_WritePin(rsms_struct->LD_Blue.port, rsms_struct->LD_Blue.pin,
+			GPIO_PIN_SET);
+}
+
+void rsms_test_FLIGHT_exit() {
+	RSMS_TEST_blinkLED(rsms_struct->LD_Blue);
+}
+
+// LANDED ====================================================================
+void rsms_test_LANDED_entry() {
+	RSMS_TEST_blinkLED(rsms_struct->LD_White);
+}
+
+void rsms_test_LANDED_while() {
+	HAL_GPIO_WritePin(rsms_struct->LD_White.port, rsms_struct->LD_White.pin,
+			GPIO_PIN_SET);
+}
+
+void rsms_test_LANDED_exit() {
+	RSMS_TEST_blinkLED(rsms_struct->LD_White);
+}
+
+// init ====================================================================
+void RSMS_TEST_init(RSMS_Test_PinStruct *rsms_test_struct) {
+	rsms_struct = rsms_test_struct;
+	RSMS_TEST_tasks_init(rsms_test_struct);
+
+	// Init Microcontroller
+	initMicrocontroller();
+	microcontroller.number = RSMS;
+	microcontroller.master = IFC;
+
+	Tasks *currentTasks;
+
+	currentTasks = &getMCState(IDLE)->tasks;
+	currentTasks->entry = &rsms_test_IDLE_entry;
+	currentTasks->whileHandle = &rsms_test_IDLE_while;
+	currentTasks->canHandle = &RSMS_TEST_canHandle;
+	currentTasks->exit = &rsms_test_IDLE_exit;
+
+	currentTasks = &getMCState(FUELING)->tasks;
+	currentTasks->entry = &rsms_test_FUELING_entry;
+	currentTasks->whileHandle = &rsms_test_FUELING_while;
+	currentTasks->canHandle = &RSMS_TEST_canHandle;
+	currentTasks->exit = &rsms_test_FUELING_exit;
+
+	currentTasks = &getMCState(RDY_SET)->tasks;
+	currentTasks->entry = &rsms_test_RDY_SET_entry;
+	currentTasks->whileHandle = &rsms_test_RDY_SET_while;
+	currentTasks->canHandle = &RSMS_TEST_canHandle;
+	currentTasks->exit = &rsms_test_RDY_SET_exit;
+
+	currentTasks = &getMCState(FLIGHT)->tasks;
+	currentTasks->entry = &rsms_test_FLIGHT_entry;
+	currentTasks->whileHandle = &rsms_test_FLIGHT_while;
+	currentTasks->canHandle = &RSMS_TEST_canHandle;
+	currentTasks->exit = &rsms_test_FLIGHT_exit;
+
+	currentTasks = &getMCState(LANDED)->tasks;
+	currentTasks->entry = &rsms_test_LANDED_entry;
+	currentTasks->whileHandle = &rsms_test_LANDED_while;
+	currentTasks->canHandle = &RSMS_TEST_canHandle;
+	currentTasks->exit = &rsms_test_LANDED_exit;
+}
+
+
 
 #endif

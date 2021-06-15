@@ -15,16 +15,15 @@ typedef enum {
 	VAS = 1,
 	RSMS = 2,
 	FSMS = 3,
-	IFC = 4,
-	GSE = 5,
+	PCDU = 4,
+	IFC = 5,
+	GSE = 6,
 	MAX_MCU = 7 // 3 bit
-} MICROCONTROLLER;
+} MCU_ID;
 
 typedef enum {
 	NULL_MESSAGE = 0,
 	TRANSITION = 1,
-//	STATUS = 3,
-//	REQUEST_STATUS,
 	DATA = 3,
 	REQUEST_DATA,
 	MAX_MESSAGE_TYPE = 7 // 3 bit
@@ -33,14 +32,15 @@ typedef enum {
 // Status ==============================================================
 typedef enum {
 	SYSTEM_OK = 0,
-	VAS_OK = 32,
-	RSMS_OK = 64,
+	VAS_OK = VAS << 5, // 32
+	RSMS_OK = RSMS << 5, // 64
 	RSMS_SD_FAULT,
-	FSMS_OK = 96,
+	FSMS_OK = FSMS << 5, // 96
 	FSMS_SD_FAULT,
-	IFC_OK = 128,
+	PCDU_OK = PCDU << 5, // 128
+	IFC_OK = IFC << 5, // 160
 	IFC_SD_FAULT,
-	GSE_OK = 160,
+	GSE_OK = GSE << 5, // 192
 	MAX_STATUS_ERROR = 255 // 8 bit
 } MCU_STATUS;
 
@@ -61,7 +61,7 @@ typedef enum {
 
 // Data ==============================================================
 typedef enum {
-	DATA_OK,
+	DATA_OK = 0,
 	DATA_DEPRECATED,
 	DATA_NOT_AVAILABLE,
 	DATA_ERROR,
@@ -70,8 +70,9 @@ typedef enum {
 
 typedef enum {
 	SYSTEM_NULL_DATA = 0,
+	SYSTEM_STATUS,
 	MCU,
-	VAS_NULL_DATA =  VAS << 9, // 512
+	VAS_NULL_DATA = VAS << 9, // 512
 	VAS_STATUS,
 	VAS_GOPRO_1,
 	VAS_GOPRO_2,
@@ -79,7 +80,21 @@ typedef enum {
 	VAS_GOPRO_4,
 	VAS_GOPRO_5,
 	VAS_PICAM,
-	FSMS_NULL_DATA = FSMS << 9, // 1024
+	RSMS_NULL_DATA = RSMS << 9, // 1024
+	RSMS_STATUS,
+	RSMS_PRESSURE_1,
+	RSMS_PRESSURE_2,
+	RSMS_PRESSURE_3,
+	RSMS_PRESSURE_4,
+	RSMS_PT_1,
+	RSMS_PT_2,
+	RSMS_PT_3,
+	RSMS_PT_4,
+	RSMS_PT_5,
+	RSMS_PT_6,
+	RSMS_PT_7,
+	RSMS_PT_8,
+	FSMS_NULL_DATA = FSMS << 9, // 1536
 	FSMS_STATUS,
 	FSMS_ACC1_X,
 	FSMS_ACC1_Y,
@@ -102,24 +117,12 @@ typedef enum {
 	FSMS_GPS_STATUS,
 	FSMS_GPS_NSAT,
 	FSMS_GPS_GDOP,
-	RSMS_NULL_DATA = RSMS << 9, // 1536
-	RSMS_STATUS,
-	RSMS_PRESSURE_1,
-	RSMS_PRESSURE_2,
-	RSMS_PRESSURE_3,
-	RSMS_PRESSURE_4,
-	RSMS_PT_1,
-	RSMS_PT_2,
-	RSMS_PT_3,
-	RSMS_PT_4,
-	RSMS_PT_5,
-	RSMS_PT_6,
-	RSMS_PT_7,
-	RSMS_PT_8,
-	IFC_NULL_DATA = IFC << 9, // 2048
+	PCDU_NULL_DATA = PCDU << 9, // 2048
+	PCDU_STATUS,
+	IFC_NULL_DATA = IFC << 9, // 2560
 	IFC_STATUS,
 	IFC_DOWNLINK,
-	GSE_NULL_DATA = GSE << 9, // 2560
+	GSE_NULL_DATA = GSE << 9, // 3072
 	GSE_STATUS,
 	MAX_DATA_ID = 4095 // 12 bit
 } DATA_ID;
