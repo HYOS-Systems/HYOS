@@ -23,7 +23,7 @@ void CAN_Start(CANBus *bus) {
 
 void setStandardFilter(CANBus *bus) {
 	bus->sFilterConfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;
-	bus->sFilterConfig.FilterIdHigh = 0x350 << 5;
+	bus->sFilterConfig.FilterIdHigh = 0x0000;
 	bus->sFilterConfig.FilterIdLow = 0;
 	bus->sFilterConfig.FilterMaskIdHigh = 0;
 	bus->sFilterConfig.FilterMaskIdLow = 0;
@@ -42,12 +42,12 @@ void CAN_setHeader(CANBus *bus, uint32_t ExtID) {
 	bus->pTxHeader.DLC = 8;
 	bus->pTxHeader.IDE = CAN_ID_EXT;
 	bus->pTxHeader.RTR = CAN_RTR_DATA;
-	bus->pTxHeader.StdId = ExtID;
+	bus->pTxHeader.ExtId = ExtID;
 
 	bus->TxMailbox = CAN_TX_MAILBOX0;
 }
 
-void CAN_init(CAN_HandleTypeDef *canHandle, uint32_t StdID) {
+CANBus* CAN_init(CAN_HandleTypeDef *canHandle, uint32_t ExtID) {
 	if (canHandle->Instance == 0) {
 		xprintf("ERROR: Invalid CAN-Handle.\n");
 	}
@@ -56,11 +56,12 @@ void CAN_init(CAN_HandleTypeDef *canHandle, uint32_t StdID) {
 		bus1.hcan = canHandle;
 		bus1.number = 1;
 
-		CAN_setHeader(&bus1, StdID);
+		CAN_setHeader(&bus1, ExtID);
 		setStandardFilter(&bus1);
 		CAN_Start(&bus1);
 
-		HAL_CAN_MspInit(bus1.hcan);
+//		HAL_CAN_MspInit(bus1.hcan);
+		return &bus1;
 	}
 #endif
 #ifdef CAN2
@@ -68,11 +69,12 @@ void CAN_init(CAN_HandleTypeDef *canHandle, uint32_t StdID) {
 		bus2.hcan = canHandle;
 		bus2.number = 2;
 
-		CAN_setHeader(&bus2, StdID);
+		CAN_setHeader(&bus2, ExtID);
 		setStandardFilter(&bus2);
 		CAN_Start(&bus2);
 
-		HAL_CAN_MspInit(bus2.hcan);
+//		HAL_CAN_MspInit(bus2.hcan);
+		return &bus2;
 	}
 #endif
 #ifdef CAN3
@@ -80,11 +82,12 @@ void CAN_init(CAN_HandleTypeDef *canHandle, uint32_t StdID) {
 		bus3.hcan = canHandle;
 		bus3.number = 3;
 
-		CAN_setHeader(&bus3, StdID);
+		CAN_setHeader(&bus3, ExtID);
 		setStandardFilter(&bus3);
 		CAN_Start(&bus3);
 
-		HAL_CAN_MspInit(bus3.hcan);
+//		HAL_CAN_MspInit(bus3.hcan);
+		return &bus3;
 	}
 #endif
 }

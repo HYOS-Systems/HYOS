@@ -37,7 +37,7 @@ CANBus bus1;
 CANBus bus2;
 CANBus bus3;
 
-void CAN_init(CAN_HandleTypeDef*, uint32_t);
+CANBus* CAN_init(CAN_HandleTypeDef*, uint32_t);
 
 void CAN_setHeader(CANBus* bus, uint32_t ExtID);
 
