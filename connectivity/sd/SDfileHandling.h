@@ -22,7 +22,7 @@
 extern FIL file;
 extern UINT state;
 
-FRESULT initSDfileHandling(void);
+FRESULT SDFH_init(void);
 
 void SDFH_getFileNameLength(uint8_t*, uint16_t);
 
