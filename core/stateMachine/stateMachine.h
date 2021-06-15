@@ -37,7 +37,7 @@ typedef struct {
 	MC_State mcStates[STATE_ID_END];
 } Microcontroller;
 
-Microcontroller microcontroller;
+volatile Microcontroller microcontroller;
 
 void voidMethod(void);
 void stateTransition(STATE_ID);

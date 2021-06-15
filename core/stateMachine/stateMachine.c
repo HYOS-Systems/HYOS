@@ -16,7 +16,7 @@ void voidVoidMethod(void* p){
 
 }
 
-void initDefaultTask(Tasks *tasks) {
+void initDefaultTask(volatile Tasks *tasks) {
 	tasks->entry = &voidMethod;
 	tasks->whileHandle = &voidMethod;
 	tasks->canHandle = &voidVoidMethod;
@@ -45,11 +45,11 @@ Tasks* getTasks() {
 }
 
 MC_State* getMCState(STATE_ID id) {
-	MC_State *state = &(microcontroller.mcStates[0]);
+	volatile MC_State *state = &(microcontroller.mcStates[0]);
 	for (int i = 0; i < STATE_ID_END; i++) {
 		MC_State currentState = microcontroller.mcStates[i];
 		if (currentState.stateID == id) {
-			state = &currentState;
+			state = &microcontroller.mcStates[i];
 			break;
 		}
 	}
