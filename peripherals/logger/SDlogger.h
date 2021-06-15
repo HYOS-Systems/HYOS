@@ -7,21 +7,16 @@
 
 #pragma once
 
-#define PERIPHERALS_LOGGER_LOGGER_H_
 #include "connectivity/sd/SDfileHandling.h"
 
-/*
-typedef struct {
-	const char *message;
-	void (*write)(Logger*, uint16_t value);
-} Logger;
+#ifdef INC_DATAHANDLING_H_
+#define PERIPHERALS_LOGGER_LOGGER_H_
 
-typedef struct {
-	Logger logger;
-	const char *fileName;
-	void (*openFile)(SDLogger*);
-	void (*closeFile)(SDLogger*);
-	uint16_t fileCounter;
-	uint16_t maxMeasurements;
-} SDLogger;
-*/
+void Logger_init(uint16_t maxNumberOfDataPerFile);
+
+void Logger_logData(const char *message, uint8_t messageLength, uint32_t time_stamp, uint16_t data);
+
+void Logger_StartDataPackage(const char *message, uint8_t messageLength, uint32_t time_stamp);
+void Logger_logChars(char *chars, uint8_t charLength);
+void Logger_EndDataPackage();
+#endif
