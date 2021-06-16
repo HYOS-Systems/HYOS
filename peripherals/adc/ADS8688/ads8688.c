@@ -89,7 +89,7 @@ void ADS_init(ADS_8688* ads) {
 	xprintf("Closed File.");
 }
 
-uint16_t ADS_measure(ADS_8688* ads){
+void ADS_measure(ADS_8688* ads){
 	datTx[0] = 0x0000;
 	datTx[1] = 0x0000;
 	datRx[0] = 0x0000;
@@ -99,7 +99,7 @@ uint16_t ADS_measure(ADS_8688* ads){
 	HAL_SPI_TransmitReceive(ads->hspi, (uint8_t*) datTx, (uint8_t*) datRx, 2, 100);
 	HAL_GPIO_WritePin(ads->cs_port, ads->cs_pin, GPIO_PIN_SET);
 
-	return datRx[1];
+	ads->dataBuffer = datRx[1];
 }
 
 #endif /* STM32F4xx_HAL_SPI_H */

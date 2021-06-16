@@ -31,9 +31,10 @@ typedef struct {
 	uint16_t cs_pin;
 	uint8_t active_pins;
 	ADS_INPUT_RANGE input_range;
+	uint16_t dataBuffer;
 } ADS_8688;
 
 void ADS_init(ADS_8688*);
-uint16_t ADS_measure(ADS_8688*);
+void ADS_measure(ADS_8688*);
 
 #endif /* STM32F#xx_HAL_SPI_H */
