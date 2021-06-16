@@ -81,5 +81,6 @@ void CANP_unpackDataMessage(CANP_Package *package, CANP_DataMessage *message);
 void CANP_unpackRequestDataMessage(CANP_Package *package,CANP_RequestDataMessage *message);
 void CANP_unpackTransitionMessage(CANP_Package *package, CANP_TransitionMessage *message);
 
+uint8_t CANP_isStatusData(CANP_Data*);
 void CANP_unpackStatus(CANP_Data*, CANP_Status*);
 void CANP_packStatus(CANP_Data*, CANP_Status*);

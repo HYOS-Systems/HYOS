@@ -130,7 +130,7 @@ void CANP_packStatus(CANP_Data *data, CANP_Status *status) {
 }
 
 uint8_t CANP_isStatusData(CANP_Data *data) {
-	return (data->header.ID & mask_09bit) & 0x0001;
+	return (data->header.ID & mask_09bit) == 0x0001;
 }
 
 #endif
