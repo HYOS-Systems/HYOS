@@ -7,3 +7,4 @@
 
 #pragma once
 
+#include "systems/compass/rsms/rsms.h"
