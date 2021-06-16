@@ -50,6 +50,7 @@ void CAN_setHeader(CANBus *bus, uint32_t ExtID) {
 CANBus* CAN_init(CAN_HandleTypeDef *canHandle, uint32_t ExtID) {
 	if (canHandle->Instance == 0) {
 		xprintf("ERROR: Invalid CAN-Handle.\n");
+		return 0;
 	}
 #ifdef CAN1
 	else if (canHandle->Instance == CAN1) {
@@ -90,6 +91,9 @@ CANBus* CAN_init(CAN_HandleTypeDef *canHandle, uint32_t ExtID) {
 		return &bus3;
 	}
 #endif
+	else {
+		return 0;
+	}
 }
 
 /* Settings ------------------------------------------------------------------*/
