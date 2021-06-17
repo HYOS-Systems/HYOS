@@ -7,13 +7,15 @@
 
 #include "systems/compass/rsms/rsms_board.h"
 
-uint16_t i;
-uint16_t j;
-
 RSMS_PeripheralStruct *rsms_struct;
+
+typedef struct {
 #ifdef __STM32_CAN_PERIPHERAL
 CANBus *bus;
 #endif
+} RSMS_BOARD_variables;
+
+RSMS_BOARD_variables rsmsBoard;
 
 #ifdef __STM32_SPI_PERIPHERAL
 #endif
@@ -26,7 +28,7 @@ void RSMS_BOARD_initUsart() {
 
 void RSMS_BOARD_initCAN() {
 #ifdef __STM32_CAN_PERIPHERAL
-	bus = CAN_init(rsms_struct->busIFC, RSMS);
+	rsmsBoard.bus = CAN_init(rsms_struct->busIFC, RSMS);
 #endif
 }
 

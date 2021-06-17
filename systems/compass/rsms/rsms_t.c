@@ -27,26 +27,26 @@ typedef struct {
 	ADS_8688 adc;
 } RSMS_T_variables;
 
-RSMS_T_variables rsms_t_struct;
+RSMS_T_variables rsmsT;
 
 void RSMS_T_initMessages() {
-	for (rsms_t_struct.i = 0; rsms_t_struct.i < RSMS_T_n_sensors; rsms_t_struct.i++) {
-		snprintf(rsms_t_struct.message[rsms_t_struct.i], 4, "T_%u", rsms_t_struct.i);
+	for (rsmsT.i = 0; rsmsT.i < RSMS_T_n_sensors; rsmsT.i++) {
+		snprintf(rsmsT.message[rsmsT.i], 4, "T_%u", rsmsT.i);
 	}
 }
 
 void RSMS_T_initADC() {
-	rsms_t_struct.adc.hspi = rsms_struct->hspi_p;
-	rsms_t_struct.adc.cs_pin = rsms_struct->chipSelect_p.pin;
-	rsms_t_struct.adc.cs_port = rsms_struct->chipSelect_p.port;
-	rsms_t_struct.adc.active_pins = 0b11000011;
-	rsms_t_struct.adc.input_range = ZT1V25;
+	rsmsT.adc.hspi = rsms_struct->hspi_p;
+	rsmsT.adc.cs_pin = rsms_struct->chipSelect_p.pin;
+	rsmsT.adc.cs_port = rsms_struct->chipSelect_p.port;
+	rsmsT.adc.active_pins = 0b11000011;
+	rsmsT.adc.input_range = ZT1V25;
 }
 
 void RSMS_T_initStruct() {
-	rsms_t_struct.i = 0;
-	rsms_t_struct.j = 0;
-	rsms_t_struct.counter = 0;
+	rsmsT.i = 0;
+	rsmsT.j = 0;
+	rsmsT.counter = 0;
 }
 
 void RSMS_T_init(RSMS_PeripheralStruct *rsms_peripheralStruct) {
@@ -57,35 +57,35 @@ void RSMS_T_init(RSMS_PeripheralStruct *rsms_peripheralStruct) {
 }
 
 void RSMS_T_measureData() {
-	for (rsms_t_struct.i = 0; rsms_t_struct.i < RSMS_T_n_sensors; rsms_t_struct.i++) {
-		ADS_measure(&rsms_t_struct.adc);
-		rsms_t_struct.buffer[rsms_t_struct.counter][rsms_t_struct.i] = rsms_t_struct.adc.dataBuffer;
+	for (rsmsT.i = 0; rsmsT.i < RSMS_T_n_sensors; rsmsT.i++) {
+		ADS_measure(&rsmsT.adc);
+		rsmsT.buffer[rsmsT.counter][rsmsT.i] = rsmsT.adc.dataBuffer;
 	}
-	rsms_t_struct.counter++;
-	if (rsms_t_struct.counter >= RSMS_T_max_smoothing) {
-		rsms_t_struct.counter = 0;
+	rsmsT.counter++;
+	if (rsmsT.counter >= RSMS_T_max_smoothing) {
+		rsmsT.counter = 0;
 	}
-	for (rsms_t_struct.i = 0; rsms_t_struct.i < RSMS_T_n_sensors; rsms_t_struct.i++) {
-		rsms_t_struct.sum = 0;
-		for (rsms_t_struct.j = 0; rsms_t_struct.j < RSMS_T_max_smoothing; rsms_t_struct.j++) {
-			rsms_t_struct.sum += rsms_t_struct.buffer[rsms_t_struct.j][rsms_t_struct.i] / (double) RSMS_T_n_sensors;
+	for (rsmsT.i = 0; rsmsT.i < RSMS_T_n_sensors; rsmsT.i++) {
+		rsmsT.sum = 0;
+		for (rsmsT.j = 0; rsmsT.j < RSMS_T_max_smoothing; rsmsT.j++) {
+			rsmsT.sum += rsmsT.buffer[rsmsT.j][rsmsT.i] / (double) RSMS_T_n_sensors;
 		}
-		rsms_t_struct.currentData[rsms_t_struct.i] = (uint16_t) rsms_t_struct.sum;
+		rsmsT.currentData[rsmsT.i] = (uint16_t) rsmsT.sum;
 	}
 }
 
 void RSMS_T_logData() {
-	for (rsms_t_struct.i = 0; rsms_t_struct.i < RSMS_T_n_sensors; rsms_t_struct.i++) {
-		Logger_logData(rsms_t_struct.message[rsms_t_struct.i], 4, rsms_t_struct.currentTime[rsms_t_struct.i],
-				rsms_t_struct.currentData[rsms_t_struct.i]);
+	for (rsmsT.i = 0; rsmsT.i < RSMS_T_n_sensors; rsmsT.i++) {
+		Logger_logData(rsmsT.message[rsmsT.i], 4, rsmsT.currentTime[rsmsT.i],
+				rsmsT.currentData[rsmsT.i]);
 	}
 }
 
 void RSMS_T_printData() {
 	xprintf("Temperature:\t");
-	for (rsms_t_struct.i = 0; rsms_t_struct.i < RSMS_T_n_sensors; rsms_t_struct.i++) {
-		xprintf("Time: %06u ", rsms_t_struct.currentTime[rsms_t_struct.i]);
-		xprintf("Value: %06u\t\t", rsms_t_struct.currentTime[rsms_t_struct.i]);
+	for (rsmsT.i = 0; rsmsT.i < RSMS_T_n_sensors; rsmsT.i++) {
+		xprintf("Time: %06u ", rsmsT.currentTime[rsmsT.i]);
+		xprintf("Value: %06u\t\t", rsmsT.currentTime[rsmsT.i]);
 	}
 	xprintf("\n");
 }

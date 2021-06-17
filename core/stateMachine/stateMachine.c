@@ -12,8 +12,9 @@ void voidMethod() {
 	// Is empty, shall remain empty...
 }
 
-void voidVoidMethod(void* p){
-
+void voidVoidMethod(void *p) {
+	// Empty Method
+	// Is empty, shall remain empty...
 }
 
 void initDefaultTask(volatile Tasks *tasks) {
