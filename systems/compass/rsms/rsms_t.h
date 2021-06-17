@@ -13,7 +13,7 @@
 #endif
 
 void RSMS_T_init(RSMS_PeripheralStruct*);
-void RSMS_T_measureTemperature(void);
+
+void RSMS_T_measureData(void);
 void RSMS_T_logData(void);
-
-
+void RSMS_T_printData(void);
