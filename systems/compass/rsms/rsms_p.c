@@ -9,7 +9,7 @@
 
 #ifdef _H_RSMS_P
 
-#define RSMS_P_max_smoothing 5
+#define RSMS_P_max_smoothing 10
 #define RSMS_P_n_sensors 4
 
 RSMS_PeripheralStruct *rsms_struct;
@@ -23,7 +23,9 @@ typedef struct {
 	uint16_t currentData[RSMS_P_n_sensors];
 	uint32_t currentTime[RSMS_P_n_sensors];
 	long double sum;
+	double polyCoef[RSMS_P_n_sensors][2];
 
+	uint16_t currentPres[RSMS_P_n_sensors];
 	ADS_8688 adc;
 } RSMS_P_variables;
 
@@ -40,13 +42,28 @@ void RSMS_P_initADC() {
 	rsmsP.adc.cs_pin = rsms_struct->chipSelect_p.pin;
 	rsmsP.adc.cs_port = rsms_struct->chipSelect_p.port;
 	rsmsP.adc.active_pins = 0b11000011;
-	rsmsP.adc.input_range = ZT1V25;
+	rsmsP.adc.input_range = ZT2V5;
+
+	ADS_init(&rsmsP.adc);
 }
 
 void RSMS_P_initStruct() {
 	rsmsP.i = 0;
 	rsmsP.j = 0;
 	rsmsP.counter = 0;
+
+	// Arch_Dept
+	rsmsP.polyCoef[0][0] = 3.41829E-2;
+	rsmsP.polyCoef[0][1] = 7.70418E-4;
+
+	rsmsP.polyCoef[1][0] = 3.09771E-2 + 1;
+	rsmsP.polyCoef[1][1] = 1.55146E-3;
+
+	rsmsP.polyCoef[2][0] = 0;
+	rsmsP.polyCoef[2][1] = 1;
+
+	rsmsP.polyCoef[3][0] = 0;
+	rsmsP.polyCoef[3][1] = 1;
 }
 
 void RSMS_P_init(RSMS_PeripheralStruct *rsms_peripheralStruct) {
@@ -76,16 +93,31 @@ void RSMS_P_measureData() {
 
 void RSMS_P_logData() {
 	for (rsmsP.i = 0; rsmsP.i < RSMS_P_n_sensors; rsmsP.i++) {
-		Logger_logData(rsmsP.message[rsmsP.i], 4, rsmsP.currentTime[rsmsP.i],
-				rsmsP.currentData[rsmsP.i]);
+		Logger_logData(rsmsP.message[rsmsP.i], 4, rsmsP.currentTime[rsmsP.i], rsmsP.currentData[rsmsP.i]);
 	}
 }
 
 void RSMS_P_printData() {
 	xprintf("Pressure:\t");
 	for (rsmsP.i = 0; rsmsP.i < RSMS_P_n_sensors; rsmsP.i++) {
-		xprintf("Time: %06u ", rsmsP.currentTime[rsmsP.i]);
+//		xprintf("Time: %06u ", rsmsP.currentTime[rsmsP.i]);
 		xprintf("Value: %06u\t\t", rsmsP.currentData[rsmsP.i]);
+	}
+	xprintf("\n");
+}
+
+void RSMS_P_calcPoly() {
+	for (rsmsP.i = 0; rsmsP.i < RSMS_P_n_sensors; rsmsP.i++) {
+		rsmsP.currentPres[rsmsP.i] = (uint16_t) (100
+				* (rsmsP.polyCoef[rsmsP.i][0] + rsmsP.polyCoef[rsmsP.i][1] * rsmsP.currentData[rsmsP.i]));
+	}
+}
+
+void RSMS_P_printPressure() {
+	xprintf("Pressure:\t");
+	for (rsmsP.i = 0; rsmsP.i < RSMS_P_n_sensors; rsmsP.i++) {
+//		xprintf("Time: %06u ", rsmsP.currentTime[rsmsP.i]);
+		xprintf("Value: %06u 10mbar\t\t", rsmsP.currentPres[rsmsP.i]);
 	}
 	xprintf("\n");
 }
