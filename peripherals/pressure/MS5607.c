@@ -68,3 +68,14 @@ void ms5607_power_up(ms5607_type * ms5607){
 	ms5607->Error = 1;
     }
 
+/* Usage Example:
+ *
+ *   ms5607_type ms5607 = constructMS5607(
+	  HAL_Delay,
+	  spi_write,
+	  spi_power_ms5607,
+	  spi_select_ms5607,
+	  spi_deselect_ms5607);
+  ms5607_power_up(&ms5607);
+ *
+ */
