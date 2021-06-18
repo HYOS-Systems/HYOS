@@ -11,10 +11,10 @@
 
 typedef struct {
 #ifdef __STM32_SPI_PERIPHERAL
-	SPI_HandleTypeDef *hspi_p;
-	GPIOPair chipSelect_p;
 	SPI_HandleTypeDef *hspi_t;
 	GPIOPair chipSelect_t;
+	SPI_HandleTypeDef *hspi_p;
+	GPIOPair chipSelect_p;
 #endif
 #ifdef __STM32_UART_PERIPHERAL
 	UART_HandleTypeDef *serialDebug;
