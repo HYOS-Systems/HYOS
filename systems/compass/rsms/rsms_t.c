@@ -42,8 +42,8 @@ void RSMS_T_initADC() {
 	rsmsT.adc.cs_pin = rsms_struct->chipSelect_t.pin;
 	rsmsT.adc.cs_port = rsms_struct->chipSelect_t.port;
 	rsmsT.adc.active_pins = 0b11000011;
-	rsmsT.adc.input_range = PM1V25;
-//	rsmsT.adc.input_range = PM2V5;
+//	rsmsT.adc.input_range = PM1V25;
+	rsmsT.adc.input_range = PM2V5;
 
 	ADS_init(&rsmsT.adc);
 }
