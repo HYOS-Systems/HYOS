@@ -15,5 +15,7 @@
 void RSMS_T_init(RSMS_PeripheralStruct*);
 
 void RSMS_T_measureData(void);
+void RSMS_T_calcPoly(void);
+void RSMS_T_printTemperature(void);
 void RSMS_T_logData(void);
 void RSMS_T_printData(void);

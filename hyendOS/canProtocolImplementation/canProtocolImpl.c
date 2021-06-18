@@ -95,7 +95,7 @@ void CANI_interpretTransitionMessage(CANBus *bus, CANP_TransitionMessage *messag
 	}
 }
 
-uint8_t CANI_isTransition(CANP_Data *data) {
+uint8_t CANI_isStatusData(CANP_Data *data) {
 	return CANP_isStatusData(data);
 }
 

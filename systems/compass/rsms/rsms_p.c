@@ -68,7 +68,7 @@ void RSMS_P_measureData() {
 	for (rsmsP.i = 0; rsmsP.i < RSMS_P_n_sensors; rsmsP.i++) {
 		rsmsP.sum = 0;
 		for (rsmsP.j = 0; rsmsP.j < RSMS_P_max_smoothing; rsmsP.j++) {
-			rsmsP.sum += rsmsP.buffer[rsmsP.j][rsmsP.i] / (double) RSMS_P_n_sensors;
+			rsmsP.sum += rsmsP.buffer[rsmsP.j][rsmsP.i] / (double) RSMS_P_max_smoothing;
 		}
 		rsmsP.currentData[rsmsP.i] = (uint16_t) rsmsP.sum;
 	}
@@ -85,7 +85,7 @@ void RSMS_P_printData() {
 	xprintf("Pressure:\t");
 	for (rsmsP.i = 0; rsmsP.i < RSMS_P_n_sensors; rsmsP.i++) {
 		xprintf("Time: %06u ", rsmsP.currentTime[rsmsP.i]);
-		xprintf("Value: %06u\t\t", rsmsP.currentTime[rsmsP.i]);
+		xprintf("Value: %06u\t\t", rsmsP.currentData[rsmsP.i]);
 	}
 	xprintf("\n");
 }
