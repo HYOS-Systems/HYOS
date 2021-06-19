@@ -8,3 +8,4 @@
 #pragma once
 
 #include "systems/compass/rsms/rsms.h"
+#include "systems/compass/ifc/ifc.h"
