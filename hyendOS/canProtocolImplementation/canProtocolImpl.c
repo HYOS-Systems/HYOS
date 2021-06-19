@@ -21,6 +21,7 @@ void CANI_receiveMessage(CANBus *bus, CANP_MessageHeader *mHeader) {
 	CAN_ReceiveMessage(bus);
 	cani.package.extID = bus->pRxHeader.ExtId;
 	CANP_unpackHeader(&cani.package, mHeader);
+	uint8_t test = 0;
 }
 
 uint8_t CANI_isThisTarget(CANP_MessageHeader *mHeader) {
@@ -72,7 +73,7 @@ uint8_t CANI_isTransitionHeader(CANP_MessageHeader *mHeader) {
 void CANI_copyCANpackage(CANP_Package *package, CANBus *bus) {
 	package->dlc = bus->pRxHeader.DLC;
 	package->extID = bus->pRxHeader.ExtId;
-	for (cani.i = 0; cani.i < package->dlc; cani.i++) {
+	for (cani.i = 0; cani.i < 8; cani.i++) {
 		package->payload[cani.i] = bus->receiveBuffer[cani.i];
 	}
 }
