@@ -17,15 +17,16 @@ typedef struct {
 	uint8_t overheadLengthln;
 	uint8_t overheadLength;
 
-	char prefix[2];
-	char fileName[9];
+	char prefix[3];
+	char fileName[8];
 	char dataString[255];
 } Logger_variables;
 
 Logger_variables Logger;
 
 void Logger_OpenFile() {
-	snprintf(Logger.fileName, 9, "%s%06u", Logger.prefix, Logger.fileCounter);
+//	snprintf(Logger.fileName, 9, "%s%06u", Logger.prefix, Logger.fileCounter);
+	snprintf(Logger.fileName, 9, "%s%06d", Logger.prefix, Logger.fileCounter);
 	SDFH_openFile(Logger.fileName);
 }
 
@@ -47,6 +48,7 @@ void Logger_init(uint16_t maxNumberOfDataPerFile) {
 	Logger.maxDataPerFile = maxNumberOfDataPerFile == 0 ? 1000 : maxNumberOfDataPerFile;
 	Logger.prefix[0] = 'D';
 	Logger.prefix[1] = 'T';
+	Logger.prefix[2] = '\0';
 	Logger_OpenFile();
 }
 
@@ -73,7 +75,7 @@ void Logger_logData(const char *message, uint8_t messageLength, uint32_t time_st
 	uint8_t len = messageLength + Logger.overheadLengthln;
 
 	snprintf(Logger.dataString, len, "%s,%010u,%06u\n", message, time_stamp, data);
-	SDFH_writeToFile(Logger.dataString, len);
+	SDFH_writeToFile(Logger.dataString, len - 1);
 	Logger_DataAdded();
 }
 
@@ -81,10 +83,10 @@ void Logger_StartDataPackage(const char *message, uint8_t messageLength, uint32_
 	uint8_t len = messageLength + Logger.overheadLength;
 
 	snprintf(Logger.dataString, len, "%s,%010u,", message, time_stamp);
-	SDFH_writeToFile(Logger.dataString, len);
+	SDFH_writeToFile(Logger.dataString, len - 1);
 }
 
-void LoggerE_ndDataPackage() {
+void Logger_EndDataPackage() {
 	SDFH_writeToFile("\n", 2);
 	Logger_DataAdded();
 }
