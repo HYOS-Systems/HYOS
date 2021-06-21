@@ -10,5 +10,9 @@
 #include "systems/compass/rsms/rsms_t.h"
 
 void RSMS_BOARD_init(RSMS_PeripheralStruct *rsms_PeripheralStruct);
+void RSMS_BOARD_tick(void);
 
 void RSMS_BOARD_canHandle(void *pt);
+
+void RSMS_BOARD_logAndSendStatus(void);
+void RSMS_BOARD_sendData(void);

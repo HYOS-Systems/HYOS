@@ -13,3 +13,6 @@
 #include "connectivity/hyend_os_connectivity.h"
 
 #include "hyendOS/canProtocolImplementation/canProtocolImpl.h"
+
+
+uint32_t HYOS_GetTick(void);

@@ -6,9 +6,9 @@
  */
 
 #include "systems/compass/ifc/ifc_types.h"
+#include "systems/compass/ifc/ifc_DataHandling.h"
 
-void IFC_blinkLED(GPIOPair ld);
-void IFC_flickLED(GPIOPair ld1, GPIOPair ld2, GPIOPair ld3);
 void IFC_BOARD_init(IFC_PeripheralStruct *ifc_PeripheralStruct);
-
+void IFC_BOARD_tick(void);
+void IFC_BOARD_logStatus(void);
 void IFC_BOARD_canHandle(void *pt);

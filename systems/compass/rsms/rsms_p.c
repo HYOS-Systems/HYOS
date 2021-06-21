@@ -9,7 +9,7 @@
 
 #ifdef _H_RSMS_P
 
-#define RSMS_P_max_smoothing 10
+#define RSMS_P_max_smoothing 1
 #define RSMS_P_n_sensors 4
 
 RSMS_PeripheralStruct *rsms_struct;
@@ -26,6 +26,8 @@ typedef struct {
 	double polyCoef[RSMS_P_n_sensors][2];
 
 	uint16_t currentPres[RSMS_P_n_sensors];
+	CANBus *bus;
+	CANP_DataMessage dataMessage;
 	ADS_8688 adc;
 } RSMS_P_variables;
 
@@ -33,7 +35,7 @@ RSMS_P_variables rsmsP;
 
 void RSMS_P_initMessages() {
 	for (rsmsP.i = 0; rsmsP.i < RSMS_P_n_sensors; rsmsP.i++) {
-		snprintf(rsmsP.message[rsmsP.i], 4, "T_%u", rsmsP.i);
+		snprintf(rsmsP.message[rsmsP.i], 4, "P_%u", rsmsP.i);
 	}
 }
 
@@ -66,22 +68,39 @@ void RSMS_P_initStruct() {
 	rsmsP.polyCoef[3][1] = 1;
 }
 
-void RSMS_P_init(RSMS_PeripheralStruct *rsms_peripheralStruct) {
+void RSMS_P_initCAN(CANBus *bus) {
+	rsmsP.bus = bus;
+	rsmsP.dataMessage.header.targetMCU = IFC;
+	rsmsP.dataMessage.header.messageType = DATA;
+
+	rsmsP.dataMessage.data1.header.status = DATA_OK;
+	rsmsP.dataMessage.data2.header.status = DATA_OK;
+}
+
+void RSMS_P_init(RSMS_PeripheralStruct *rsms_peripheralStruct, CANBus *bus) {
 	rsms_struct = rsms_peripheralStruct;
+
 	RSMS_P_initStruct();
 	RSMS_P_initADC();
 	RSMS_P_initMessages();
+	RSMS_P_initCAN(bus);
 }
 
 void RSMS_P_measureData() {
+	// Measure
 	for (rsmsP.i = 0; rsmsP.i < RSMS_P_n_sensors; rsmsP.i++) {
 		ADS_measure(&rsmsP.adc);
 		rsmsP.buffer[rsmsP.counter][rsmsP.i] = rsmsP.adc.dataBuffer;
+		rsmsP.currentTime[rsmsP.i] = HYOS_GetTick();
 	}
+
+	// Count Data for Smoothing
 	rsmsP.counter++;
 	if (rsmsP.counter >= RSMS_P_max_smoothing) {
 		rsmsP.counter = 0;
 	}
+
+	// Smooth
 	for (rsmsP.i = 0; rsmsP.i < RSMS_P_n_sensors; rsmsP.i++) {
 		rsmsP.sum = 0;
 		for (rsmsP.j = 0; rsmsP.j < RSMS_P_max_smoothing; rsmsP.j++) {
@@ -120,6 +139,19 @@ void RSMS_P_printPressure() {
 		xprintf("Value: %06u 10mbar\t\t", rsmsP.currentPres[rsmsP.i]);
 	}
 	xprintf("\n");
+}
+
+void RSMS_P_sendData() {
+	for (rsmsP.i = 0; rsmsP.i < RSMS_P_n_sensors; rsmsP.i += 2) {
+		rsmsP.dataMessage.header.timeStamp = rsmsP.currentTime[rsmsP.i];
+
+		rsmsP.dataMessage.data1.header.ID = RSMS_PRESSURE_1 + rsmsP.i;
+		rsmsP.dataMessage.data1.payload = rsmsP.currentPres[rsmsP.i];
+		rsmsP.dataMessage.data2.header.ID = RSMS_PRESSURE_1 + rsmsP.i + 1;
+		rsmsP.dataMessage.data2.payload = rsmsP.currentPres[rsmsP.i + 1];
+
+		CANI_sendData(rsmsP.bus, &rsmsP.dataMessage);
+	}
 }
 
 #endif

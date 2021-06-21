@@ -10,6 +10,7 @@
 #ifdef PERIPHERALS_LOGGER_LOGGER_H_
 
 typedef struct {
+	uint8_t i;
 	uint16_t fileCounter;
 	uint32_t dataCounter;
 	uint32_t maxDataPerFile;
@@ -35,9 +36,9 @@ void Logger_CloseFile() {
 }
 
 void Logger_init(uint16_t maxNumberOfDataPerFile) {
-	uint8_t dataStringLength = 5;
+	uint8_t dataStringLength = 6;
 	uint8_t timeStampStringLength = 10;
-	uint8_t seperatorLength = 4; // ,,\0
+	uint8_t seperatorLength = 3; // ,,\0
 	uint8_t endOfLineLength = 1; // \n
 	Logger.overheadLength = dataStringLength + timeStampStringLength + seperatorLength;
 	Logger.overheadLengthln = Logger.overheadLength + endOfLineLength;
@@ -93,6 +94,14 @@ void Logger_EndDataPackage() {
 
 void Logger_logChars(char *chars, uint8_t charLength) {
 	SDFH_writeToFile(chars, charLength);
+}
+
+void Logger_logNumbers(uint16_t *data, uint8_t dataLength) {
+	uint8_t len = 8;
+	for (Logger.i = 0; Logger.i < dataLength; Logger.i++) {
+		snprintf(Logger.dataString, len, "%06u,", data[Logger.i]);
+		SDFH_writeToFile(Logger.dataString, len - 1);
+	}
 }
 
 #endif

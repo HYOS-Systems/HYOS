@@ -1,5 +1,5 @@
 /*
- * rsms_types.h
+ * ifc_types.h
  *
  *  Created on: Jun 16, 2021
  *      Author: Bayram
@@ -10,33 +10,32 @@
 #include "systems/systemUtils.h"
 
 typedef struct {
-#ifdef __STM32_SPI_PERIPHERAL
-	SPI_HandleTypeDef *hspi_t;
-	GPIOPair chipSelect_t;
-	SPI_HandleTypeDef *hspi_p;
-	GPIOPair chipSelect_p;
-#endif
+	GPIOPair GP1ON;
+	GPIOPair GP1REC;
+	uint16_t i2c_add;
+} VAS_GoPro;
+
+typedef struct {
 #ifdef __STM32_UART_PERIPHERAL
 	UART_HandleTypeDef *serialDebug;
 #endif
 #ifdef __STM32_CAN_PERIPHERAL
-	CAN_HandleTypeDef *busIFC;
+	CAN_HandleTypeDef *bus;
 #endif
 #ifdef __STM32_TIM_PERIPHERAL
 	TIM_HandleTypeDef *htim;
-	Timer pTim;
-	Timer tTim;
-	Timer canStatusTim;
-	Timer canDataTim;
+	Timer statusTim;
 #endif
+
+#ifdef __STM32_I2C_PERIPHERAL
+	I2C_HandleTypeDef *hi2c;
+#endif
+
 	GPIOPair LD1;
 	GPIOPair LD2;
 	GPIOPair LD3;
 	GPIOPair LD4;
-	GPIOPair UTIL1;
-	GPIOPair UTIL2;
-	GPIOPair UTIL3;
-	GPIOPair UTIL4;
-} RSMS_PeripheralStruct;
-
+	VAS_GoPro GP1;
+	VAS_GoPro GP2;
+} VAS_PeripheralStruct;
 

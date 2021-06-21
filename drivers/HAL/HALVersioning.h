@@ -35,3 +35,7 @@
 #if defined(STM32F1xx_HAL_I2C_H) || defined(STM32F4xx_HAL_I2C_H)
 #define __STM32_I2C_PERIPHERAL
 #endif
+
+#if defined(STM32F1xx_HAL_TIM_H) || defined(STM32F4xx_HAL_TIM_H)
+#define __STM32_TIM_PERIPHERAL
+#endif

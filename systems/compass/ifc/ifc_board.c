@@ -7,136 +7,96 @@
 
 #include "systems/compass/ifc/ifc_board.h"
 
-typedef struct {
-#ifdef __STM32_CAN_PERIPHERAL
-//#if 1
-	CANBus *gseBus;
-	CANBus *sysBus;
+IFC_PeripheralStruct *ifc_struct;
 
-	CANBus *bus;
+typedef struct {
+	MCU_STATUS mcuStatus;
+	uint32_t time;
 	CANP_Status status;
-	CANP_MessageHeader header;
 	CANP_Data data;
-	CANP_DataMessage dataMessage;
-	CANP_RequestDataMessage reqDataMessage;
-	CANP_TransitionMessage transitionMessage;
-#endif
 } IFC_BOARD_Peripherals;
 IFC_BOARD_Peripherals ifcBoard;
 
-#ifdef __STM32_SPI_PERIPHERAL
-#endif
-
 // Init =================================================================
-void IFC_BOARD_initUsart(IFC_PeripheralStruct *ifc_struct) {
+void IFC_BOARD_initUsart() {
 #ifdef __STM32_UART_PERIPHERAL
 	initXprint(ifc_struct->serialDebug);
 #endif
 }
 
-void IFC_BOARD_initCAN(IFC_PeripheralStruct *ifc_struct) {
-#ifdef __STM32_CAN_PERIPHERAL
-	ifcBoard.gseBus = CAN_init(ifc_struct->busGSE, IFC);
-//	ifcBoard.sysBus = CAN_init(ifc_struct->busSys, IFC);
+void IFC_BOARD_initSDLogging() {
+#ifdef __STM32_SDIO_PERIPHERAL
+	FRESULT res = SDFH_init();
+	Logger_init(10);
+
+	if (res != FR_OK) {
+		ifcBoard.mcuStatus = RSMS_SD_FAULT;
+	}
 #endif
 }
 
-void IFC_BOARD_initSDLogging() {
-#ifdef __STM32_SDIO_PERIPHERAL
-	SDFH_init();
-	Logger_init(10);
+void IFC_BOARD_initTim() {
+#ifdef __STM32_TIM_PERIPHERAL
+
+	ifc_struct->statusTim.cnt = 0;
+	ifc_struct->statusTim.max = 1000;
+	ifc_struct->statusTim.flag = 0;
+	ifc_struct->second.cnt = 0;
+	ifc_struct->second.max = 10;
+	ifc_struct->second.flag = 0;
+
+	HAL_TIM_Base_Start_IT(ifc_struct->htim);
 #endif
 }
 
 void IFC_BOARD_init(IFC_PeripheralStruct *ifc_PeripheralStruct) {
-	MAP_init();
+	ifc_struct = ifc_PeripheralStruct;
+
 //	IFC_BOARD_initUsart(ifc_PeripheralStruct);
-	IFC_BOARD_initCAN(ifc_PeripheralStruct);
+	MAP_init();
+	IFC_DH_init(ifc_struct);
 	IFC_BOARD_initSDLogging();
+	IFC_BOARD_initTim();
 
 	xprintf("IFC Initialisiert.\n");
 }
 
-// Test =================================================================
-void IFC_blinkLED(GPIOPair ld) {
-	HAL_GPIO_WritePin(ld.port, ld.pin, GPIO_PIN_SET);
-	for (uint8_t i = 0; i < 3 * 2 - 1; i++) {
-		HAL_Delay(500);
-		HAL_GPIO_TogglePin(ld.port, ld.pin);
-	}
+// DataHandling =================================================================
+void IFC_BOARD_tick() {
+#ifdef __STM32_TIM_PERIPHERAL
+	TIMER_tick(&ifc_struct->statusTim);
+	TIMER_tick(&ifc_struct->second);
+#endif
 }
 
-void IFC_flickLED(GPIOPair ld1, GPIOPair ld2, GPIOPair ld3) {
-	HAL_GPIO_WritePin(ld1.port, ld1.pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(ld2.port, ld2.pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(ld3.port, ld3.pin, GPIO_PIN_SET);
-	HAL_Delay(50);
-	HAL_GPIO_WritePin(ld1.port, ld1.pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(ld2.port, ld2.pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(ld3.port, ld3.pin, GPIO_PIN_RESET);
-	HAL_Delay(50);
-	HAL_GPIO_WritePin(ld1.port, ld1.pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(ld2.port, ld2.pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(ld3.port, ld3.pin, GPIO_PIN_SET);
-	HAL_Delay(50);
-	HAL_GPIO_WritePin(ld1.port, ld1.pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(ld2.port, ld2.pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(ld3.port, ld3.pin, GPIO_PIN_RESET);
+void IFC_BOARD_logSingleStatus(const char *messageState, uint8_t lenState, const char *messageStatus, uint8_t lenStatus,
+		DATA_ID key) {
+#ifdef __STM32_SDIO_PERIPHERAL
+	ifcBoard.time = MAP_getDataToCANP(key, &ifcBoard.data);
+	CANI_unpackStatus(&ifcBoard.data, &ifcBoard.status);
+
+	Logger_logData(messageState, lenState, ifcBoard.time, ifcBoard.status.state);
+	Logger_logData(messageStatus, lenStatus, ifcBoard.time, ifcBoard.status.mcuStatus);
+#endif
+}
+
+void IFC_BOARD_logStatus() {
+	// Store own state to Map
+	ifcBoard.status.state = microcontroller.state->stateID;
+	ifcBoard.status.mcuStatus = ifcBoard.mcuStatus;
+	ifcBoard.status.header.ID = IFC_STATUS;
+	ifcBoard.status.header.status = DATA_OK;
+	CANI_packStatus(&ifcBoard.data, &ifcBoard.status);
+	MAP_setDataFromCANP(&ifcBoard.data, HYOS_GetTick());
+
+	// Log all Stati to SD Card
+	IFC_BOARD_logSingleStatus("IFC_State", 9, "IFC_Status", 10, IFC_STATUS);
+	IFC_BOARD_logSingleStatus("FSMS_State", 10, "FSMS_Status", 11, FSMS_STATUS);
+	IFC_BOARD_logSingleStatus("RSMS_State", 10, "RSMS_Status", 11, RSMS_STATUS);
+	IFC_BOARD_logSingleStatus("VAS_State", 9, "VAS_Status", 10, VAS_STATUS);
 }
 
 // DataHandling =================================================================
-void IFC_BOARD_reactOnSingleData(CANP_MessageHeader *header, CANP_Data *data) {
-	if (CANI_isStatusData(data)) {
-		CANI_unpackStatus(data, &ifcBoard.status);
-
-	} else {
-
-	}
-}
-
-void IFC_BOARD_reactOnData() {
-	IFC_BOARD_reactOnSingleData(&ifcBoard.dataMessage.header, &ifcBoard.dataMessage.data1);
-	IFC_BOARD_reactOnSingleData(&ifcBoard.dataMessage.header, &ifcBoard.dataMessage.data2);
-}
-
-void IFC_BOARD_reactOnSingleRequest(CANP_MessageHeader *header, DATA_ID dataID) {
-	header->timeStamp = MAP_getDataToCANP(dataID, &ifcBoard.data);
-}
-
-void IFC_BOARD_reactOnRequest() {
-	IFC_BOARD_reactOnSingleRequest(&ifcBoard.reqDataMessage.header, ifcBoard.reqDataMessage.dataID1);
-	ifcBoard.dataMessage.data1 = ifcBoard.data;
-	IFC_BOARD_reactOnSingleRequest(&ifcBoard.reqDataMessage.header, ifcBoard.reqDataMessage.dataID2);
-	ifcBoard.dataMessage.data2 = ifcBoard.data;
-
-	ifcBoard.dataMessage.header.targetMCU = GSE;
-	ifcBoard.dataMessage.header.messageType = DATA;
-	ifcBoard.dataMessage.header.timeStamp = HAL_GetTick() * 100;
-
-	CANI_sendData(ifcBoard.gseBus, &ifcBoard.dataMessage);
-}
-
 void IFC_BOARD_canHandle(void *pt) {
-	ifcBoard.bus = (CANBus*) pt;
-	CANI_receiveMessage(ifcBoard.bus, &ifcBoard.header);
-
-	if (!CANI_isThisTarget(&ifcBoard.header)) {
-		return;
-	}
-
-	switch (ifcBoard.header.messageType) {
-	case DATA:
-		CANI_interpretDataMessage(ifcBoard.bus, &ifcBoard.dataMessage);
-		IFC_BOARD_reactOnData();
-		break;
-	case REQUEST_DATA:
-		CANI_interpretRequestDataMessage(ifcBoard.bus, &ifcBoard.reqDataMessage);
-		IFC_BOARD_reactOnRequest();
-		break;
-	case TRANSITION:
-		CANI_interpretTransitionMessage(ifcBoard.bus, &ifcBoard.transitionMessage);
-		break;
-	default:
-		break;
-	}
+	IFC_DH_canHandle((CANBus*) pt);
 }

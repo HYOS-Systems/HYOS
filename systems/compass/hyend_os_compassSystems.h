@@ -9,3 +9,4 @@
 
 #include "systems/compass/rsms/rsms.h"
 #include "systems/compass/ifc/ifc.h"
+#include "systems/compass/vas/vas.h"

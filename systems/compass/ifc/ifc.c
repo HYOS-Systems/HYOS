@@ -76,87 +76,70 @@ void ifc_init_DATA_FIELD(STATE_ID number) {
 
 // IDLE ====================================================================
 void ifc_IDLE_entry() {
-	IFC_blinkLED(ifc_struct->LD1);
-	HAL_GPIO_TogglePin(ifc_struct->LD1.port, ifc_struct->LD1.pin);
-	ifc_init_DATA_FIELD(IDLE);
+	IFC_DH_sendTransition(IDLE);
 }
 
 void ifc_IDLE_while() {
-	if (ifc_struct->flag1 > 0) {
-		ifc_struct->flag1 = 0;
-		IFC_flickLED(ifc_struct->LD2, ifc_struct->LD3, ifc_struct->LD4);
+	if (TIMER_itsTime(&ifc_struct->statusTim)) {
+		IFC_BOARD_logStatus();
+		HAL_GPIO_TogglePin(ifc_struct->LD1.port, ifc_struct->LD1.pin);
 	}
 }
 
 void ifc_IDLE_exit() {
-	IFC_blinkLED(ifc_struct->LD1);
 }
 
 // FUELING ====================================================================
 void ifc_FUELING_entry() {
-	IFC_blinkLED(ifc_struct->LD2);
-	HAL_GPIO_TogglePin(ifc_struct->LD2.port, ifc_struct->LD2.pin);
-	ifc_init_DATA_FIELD(FUELING);
+	IFC_DH_sendTransition(FUELING);
 }
 
 void ifc_FUELING_while() {
-	if (ifc_struct->flag1 > 0) {
-		ifc_struct->flag1 = 0;
-		IFC_flickLED(ifc_struct->LD1, ifc_struct->LD3, ifc_struct->LD4);
+	if (TIMER_itsTime(&ifc_struct->statusTim)) {
+		IFC_BOARD_logStatus();
 	}
-
 }
 
 void ifc_FUELING_exit() {
-	IFC_blinkLED(ifc_struct->LD2);
 }
 
 // RDY_SET ====================================================================
 void ifc_RDY_SET_entry() {
-	IFC_blinkLED(ifc_struct->LD3);
-	HAL_GPIO_TogglePin(ifc_struct->LD3.port, ifc_struct->LD3.pin);
-	ifc_init_DATA_FIELD(RDY_SET);
+	IFC_DH_sendTransition(RDY_SET);
 }
 
 void ifc_RDY_SET_while() {
-	if (ifc_struct->flag1 > 0) {
-		ifc_struct->flag1 = 0;
-		IFC_flickLED(ifc_struct->LD1, ifc_struct->LD2, ifc_struct->LD4);
+	if (TIMER_itsTime(&ifc_struct->statusTim)) {
+		IFC_BOARD_logStatus();
 	}
 }
 
 void ifc_RDY_SET_exit() {
-	IFC_blinkLED(ifc_struct->LD3);
 }
 
 // FLIGHT ====================================================================
 void ifc_FLIGHT_entry() {
-	ifc_init_DATA_FIELD(FLIGHT);
-	HAL_GPIO_TogglePin(ifc_struct->LD4.port, ifc_struct->LD4.pin);
-	IFC_blinkLED(ifc_struct->LD4);
+	IFC_DH_sendTransition(FLIGHT);
 }
 
 void ifc_FLIGHT_while() {
-	if (ifc_struct->flag1 > 0) {
-		ifc_struct->flag1 = 0;
-		IFC_flickLED(ifc_struct->LD3, ifc_struct->LD2, ifc_struct->LD3);
-	}
-	if (ifc_struct->flag2 > 0) {
-		ifc_struct->flag2 = 0;
-		HAL_GPIO_TogglePin(ifc_struct->LD1.port, ifc_struct->LD1.pin);
-		Logger_logData("Test", 4, HAL_GetTick() * 100, HAL_GetTick());
+	if (TIMER_itsTime(&ifc_struct->statusTim)) {
+		IFC_BOARD_logStatus();
 	}
 }
 
 void ifc_FLIGHT_exit() {
-	IFC_blinkLED(ifc_struct->LD4);
 }
 
 // LANDED ====================================================================
 void ifc_LANDED_entry() {
+	IFC_DH_sendTransition(LANDED);
 }
 
 void ifc_LANDED_while() {
+	if (TIMER_itsTime(&ifc_struct->statusTim)) {
+		IFC_BOARD_logStatus();
+	}
 }
 
 void ifc_LANDED_exit() {

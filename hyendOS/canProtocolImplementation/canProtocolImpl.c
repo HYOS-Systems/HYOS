@@ -21,7 +21,6 @@ void CANI_receiveMessage(CANBus *bus, CANP_MessageHeader *mHeader) {
 	CAN_ReceiveMessage(bus);
 	cani.package.extID = bus->pRxHeader.ExtId;
 	CANP_unpackHeader(&cani.package, mHeader);
-	uint8_t test = 0;
 }
 
 uint8_t CANI_isThisTarget(CANP_MessageHeader *mHeader) {

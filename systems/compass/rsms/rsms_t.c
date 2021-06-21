@@ -9,7 +9,7 @@
 
 #ifdef _H_RSMS_T
 
-#define RSMS_T_max_smoothing 10
+#define RSMS_T_max_smoothing 1
 #define RSMS_T_n_sensors 4
 
 RSMS_PeripheralStruct *rsms_struct;
@@ -26,6 +26,8 @@ typedef struct {
 	double polyCoef[RSMS_T_n_sensors][3];
 
 	uint16_t currentTemp[RSMS_T_n_sensors];
+	CANBus *bus;
+	CANP_DataMessage dataMessage;
 	ADS_8688 adc;
 } RSMS_T_variables;
 
@@ -62,20 +64,30 @@ void RSMS_T_initStruct() {
 	rsmsT.polyCoef[1][1] = 3.96460E-03;
 	rsmsT.polyCoef[1][2] = 1.02905E-07;
 
- 	rsmsT.polyCoef[2][0] = -1.02257E+02;
+	rsmsT.polyCoef[2][0] = -1.02257E+02;
 	rsmsT.polyCoef[2][1] = 4.39660E-03;
 	rsmsT.polyCoef[2][2] = 9.22682E-08;
 
- 	rsmsT.polyCoef[3][0] = -1.06720E+02;
+	rsmsT.polyCoef[3][0] = -1.06720E+02;
 	rsmsT.polyCoef[3][1] = 4.68381E-03;
 	rsmsT.polyCoef[3][2] = 8.89494E-08;
 }
 
-void RSMS_T_init(RSMS_PeripheralStruct *rsms_peripheralStruct) {
+void RSMS_T_initCAN(CANBus *bus) {
+	rsmsT.bus = bus;
+	rsmsT.dataMessage.header.targetMCU = IFC;
+	rsmsT.dataMessage.header.messageType = DATA;
+
+	rsmsT.dataMessage.data1.header.status = DATA_OK;
+	rsmsT.dataMessage.data2.header.status = DATA_OK;
+}
+
+void RSMS_T_init(RSMS_PeripheralStruct *rsms_peripheralStruct, CANBus *bus) {
 	rsms_struct = rsms_peripheralStruct;
 	RSMS_T_initStruct();
 	RSMS_T_initADC();
 	RSMS_T_initMessages();
+	RSMS_T_initCAN(bus);
 }
 
 void RSMS_T_measureData() {
@@ -83,6 +95,7 @@ void RSMS_T_measureData() {
 	for (rsmsT.i = 0; rsmsT.i < RSMS_T_n_sensors; rsmsT.i++) {
 		ADS_measure(&rsmsT.adc);
 		rsmsT.buffer[rsmsT.counter][rsmsT.i] = rsmsT.adc.dataBuffer;
+		rsmsT.currentTime[rsmsT.i] = HYOS_GetTick();
 	}
 
 	// Count data for Smoothing
@@ -118,9 +131,9 @@ void RSMS_T_printData() {
 
 void RSMS_T_calcPoly() {
 	for (rsmsT.i = 0; rsmsT.i < RSMS_T_n_sensors; rsmsT.i++) {
-		rsmsT.currentTemp[rsmsT.i] = (uint16_t) (100 * (rsmsT.polyCoef[rsmsT.i][0]
-				+ rsmsT.polyCoef[rsmsT.i][1] * rsmsT.currentData[rsmsT.i]
-				+ rsmsT.polyCoef[rsmsT.i][2] * rsmsT.currentData[rsmsT.i] * rsmsT.currentData[rsmsT.i]));
+		rsmsT.currentTemp[rsmsT.i] = (uint16_t) (100
+				* (273.15 + rsmsT.polyCoef[rsmsT.i][0] + rsmsT.polyCoef[rsmsT.i][1] * rsmsT.currentData[rsmsT.i]
+						+ rsmsT.polyCoef[rsmsT.i][2] * rsmsT.currentData[rsmsT.i] * rsmsT.currentData[rsmsT.i]));
 	}
 }
 
@@ -131,6 +144,19 @@ void RSMS_T_printTemperature() {
 		xprintf("Value: %06u deg\t\t", rsmsT.currentTemp[rsmsT.i]);
 	}
 	xprintf("\n");
+}
+
+void RSMS_T_sendData() {
+	for (rsmsT.i = 0; rsmsT.i < RSMS_T_n_sensors; rsmsT.i += 2) {
+		rsmsT.dataMessage.header.timeStamp = rsmsT.currentTime[rsmsT.i];
+
+		rsmsT.dataMessage.data1.header.ID = RSMS_PT_1 + rsmsT.i;
+		rsmsT.dataMessage.data1.payload = rsmsT.currentTemp[rsmsT.i];
+		rsmsT.dataMessage.data2.header.ID = RSMS_PT_1 + rsmsT.i + 1;
+		rsmsT.dataMessage.data2.payload = rsmsT.currentTemp[rsmsT.i + 1];
+
+		CANI_sendData(rsmsT.bus, &rsmsT.dataMessage);
+	}
 }
 
 #endif
