@@ -7,7 +7,7 @@
 
 #include "peripherals/logger/SDlogger.h"
 
-#ifdef PERIPHERALS_LOGGER_LOGGER_H_
+//#ifdef PERIPHERALS_LOGGER_LOGGER_H_
 
 typedef struct {
 	uint8_t i;
@@ -88,7 +88,7 @@ void Logger_StartDataPackage(const char *message, uint8_t messageLength, uint32_
 }
 
 void Logger_EndDataPackage() {
-	SDFH_writeToFile("\n", 2);
+	SDFH_writeToFile("\n", 1);
 	Logger_DataAdded();
 }
 
