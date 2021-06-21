@@ -40,7 +40,7 @@ void Logger_init(uint16_t maxNumberOfDataPerFile) {
 	uint8_t timeStampStringLength = 10;
 	uint8_t seperatorLength = 3; // ,,\0
 	uint8_t endOfLineLength = 1; // \n
-	Logger.overheadLength = dataStringLength + timeStampStringLength + seperatorLength;
+	Logger.overheadLength = timeStampStringLength + seperatorLength;
 	Logger.overheadLengthln = Logger.overheadLength + endOfLineLength;
 
 	Logger.fileCounter = 0;
