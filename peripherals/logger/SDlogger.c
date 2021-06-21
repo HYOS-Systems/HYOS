@@ -7,7 +7,7 @@
 
 #include "peripherals/logger/SDlogger.h"
 
-//#ifdef PERIPHERALS_LOGGER_LOGGER_H_
+#ifdef PERIPHERALS_LOGGER_LOGGER_H_
 
 typedef struct {
 	uint8_t i;

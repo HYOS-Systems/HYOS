@@ -18,5 +18,6 @@ void Logger_logData(const char *message, uint8_t messageLength, uint32_t time_st
 
 void Logger_StartDataPackage(const char *message, uint8_t messageLength, uint32_t time_stamp);
 void Logger_logChars(char *chars, uint8_t charLength);
+void Logger_logNumbers(uint16_t *data, uint8_t dataLength);
 void Logger_EndDataPackage();
 #endif
