@@ -32,7 +32,7 @@
 #define __STM32_SPI_PERIPHERAL
 #endif
 
-#if defined(STM32F1xx_HAL_I2C_H) || defined(STM32F4xx_HAL_I2C_H)
+#if defined(__STM32F1xx_HAL_I2C_H) || defined(__STM32F4xx_HAL_I2C_H)
 #define __STM32_I2C_PERIPHERAL
 #endif
 
