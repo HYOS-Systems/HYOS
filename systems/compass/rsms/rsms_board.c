@@ -62,7 +62,7 @@ void RSMS_BOARD_initTim() {
 	rsms_struct->canStatusTim.flag = 0;
 
 	rsms_struct->canDataTim.cnt = 0;
-	rsms_struct->canDataTim.max = 10;
+	rsms_struct->canDataTim.max = 100;
 	rsms_struct->canDataTim.flag = 0;
 
 	rsms_struct->pTim.cnt = 0;

@@ -14,3 +14,9 @@ void VAS_BOARD_canHandle(void *pt);
 
 void VAS_BOARD_sendStatus(void);
 void VAS_BOARD_sendData(void);
+
+uint8_t VAS_isGPOn();
+uint8_t VAS_isGPRecording();
+void VAS_startGP();
+void VAS_startGPRecording();
+void VAS_shutdownGP();

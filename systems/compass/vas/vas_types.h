@@ -10,9 +10,10 @@
 #include "systems/systemUtils.h"
 
 typedef struct {
-	GPIOPair GP1ON;
-	GPIOPair GP1REC;
-	uint16_t i2c_add;
+	GPIOPair on;
+	GPIOPair rec;
+	GPIOPair alert;
+	INA233 ina;
 } VAS_GoPro;
 
 typedef struct {
@@ -25,10 +26,7 @@ typedef struct {
 #ifdef __STM32_TIM_PERIPHERAL
 	TIM_HandleTypeDef *htim;
 	Timer statusTim;
-#endif
-
-#ifdef __STM32_I2C_PERIPHERAL
-	I2C_HandleTypeDef *hi2c;
+	Timer gpCheckTim;
 #endif
 
 	GPIOPair LD1;

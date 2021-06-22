@@ -15,6 +15,7 @@ typedef struct {
 	uint32_t dataCounter;
 	uint32_t maxDataPerFile;
 
+	uint8_t dataStringLength;
 	uint8_t overheadLengthln;
 	uint8_t overheadLength;
 
@@ -36,11 +37,11 @@ void Logger_CloseFile() {
 }
 
 void Logger_init(uint16_t maxNumberOfDataPerFile) {
-	uint8_t dataStringLength = 6;
+	Logger.dataStringLength = 6;
 	uint8_t timeStampStringLength = 10;
 	uint8_t seperatorLength = 3; // ,,\0
 	uint8_t endOfLineLength = 1; // \n
-	Logger.overheadLength = timeStampStringLength + seperatorLength;
+	Logger.overheadLength = Logger.dataStringLength + timeStampStringLength + seperatorLength;
 	Logger.overheadLengthln = Logger.overheadLength + endOfLineLength;
 
 	Logger.fileCounter = 0;
@@ -81,7 +82,7 @@ void Logger_logData(const char *message, uint8_t messageLength, uint32_t time_st
 }
 
 void Logger_StartDataPackage(const char *message, uint8_t messageLength, uint32_t time_stamp) {
-	uint8_t len = messageLength + Logger.overheadLength;
+	uint8_t len = messageLength + Logger.overheadLength - Logger.dataStringLength;
 
 	snprintf(Logger.dataString, len, "%s,%010u,", message, time_stamp);
 	SDFH_writeToFile(Logger.dataString, len - 1);

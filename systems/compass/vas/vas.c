@@ -16,6 +16,13 @@ void vas_IDLE_entry() {
 void vas_IDLE_while() {
 	if (TIMER_itsTime(&vas_struct->statusTim)) {
 		VAS_BOARD_sendStatus();
+		HAL_GPIO_TogglePin(vas_struct->LD1.port, vas_struct->LD1.pin);
+	}
+
+	if (TIMER_itsTime(&vas_struct->gpCheckTim)) {
+		if (VAS_isGPOn()) {
+			VAS_shutdownGP();
+		}
 	}
 }
 
@@ -30,6 +37,11 @@ void vas_FUELING_while() {
 	if (TIMER_itsTime(&vas_struct->statusTim)) {
 		VAS_BOARD_sendStatus();
 	}
+	if (TIMER_itsTime(&vas_struct->gpCheckTim)) {
+		if (VAS_isGPOn()) {
+			VAS_shutdownGP();
+		}
+	}
 }
 
 void vas_FUELING_exit() {
@@ -37,11 +49,23 @@ void vas_FUELING_exit() {
 
 // RDY_SET ====================================================================
 void vas_RDY_SET_entry() {
+	if (!VAS_isGPOn()) {
+		VAS_startGP();
+		VAS_startGPRecording();
+	}
 }
 
 void vas_RDY_SET_while() {
 	if (TIMER_itsTime(&vas_struct->statusTim)) {
 		VAS_BOARD_sendStatus();
+	}
+	if (TIMER_itsTime(&vas_struct->gpCheckTim)) {
+		if (!VAS_isGPOn()) {
+			VAS_startGP();
+		}
+		if (!VAS_isGPRecording()) {
+			VAS_startGPRecording();
+		}
 	}
 }
 
@@ -56,6 +80,14 @@ void vas_FLIGHT_while() {
 	if (TIMER_itsTime(&vas_struct->statusTim)) {
 		VAS_BOARD_sendStatus();
 	}
+	if (TIMER_itsTime(&vas_struct->gpCheckTim)) {
+		if (!VAS_isGPOn()) {
+			VAS_startGP();
+		}
+		if (!VAS_isGPRecording()) {
+			VAS_startGPRecording();
+		}
+	}
 }
 
 void vas_FLIGHT_exit() {
@@ -63,6 +95,9 @@ void vas_FLIGHT_exit() {
 
 // LANDED ====================================================================
 void vas_LANDED_entry() {
+//	if(VAS_isGPOn()){
+//		VAS_shutdownGP();
+//	}
 }
 
 void vas_LANDED_while() {

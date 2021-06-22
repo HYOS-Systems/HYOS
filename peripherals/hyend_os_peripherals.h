@@ -15,4 +15,5 @@
 #include "peripherals/imu/BMI088.h"
 #include "peripherals/pressure/MS5607.h"
 #include "peripherals/gps/gps.h"
+#include "peripherals/ina233/ina233.h"
 

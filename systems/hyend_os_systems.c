@@ -16,7 +16,7 @@ Microcontroller mc;
  * Calls State Transition to IDLE.
  */
 void HYOS_start() {
-	microcontroller.state = getMCState(NULL_STATE);
+//	microcontroller.state = getMCState(NULL_STATE);
 	stateTransition(IDLE);
 }
 

@@ -112,7 +112,7 @@ void RSMS_P_measureData() {
 
 void RSMS_P_logData() {
 	for (rsmsP.i = 0; rsmsP.i < RSMS_P_n_sensors; rsmsP.i++) {
-		Logger_logData(rsmsP.message[rsmsP.i], 4, rsmsP.currentTime[rsmsP.i], rsmsP.currentData[rsmsP.i]);
+		Logger_logData(rsmsP.message[rsmsP.i], 3, rsmsP.currentTime[rsmsP.i], rsmsP.currentPres[rsmsP.i]);
 	}
 }
 

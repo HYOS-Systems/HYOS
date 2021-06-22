@@ -45,7 +45,10 @@ void RSMS_T_initADC() {
 	rsmsT.adc.cs_port = rsms_struct->chipSelect_t.port;
 	rsmsT.adc.active_pins = 0b11000011;
 //	rsmsT.adc.input_range = PM1V25;
-	rsmsT.adc.input_range = PM2V5;
+//	rsmsT.adc.input_range = PM2V5;
+//	rsmsT.adc.input_range = PM2V5;
+//	rsmsT.adc.input_range = ZT2V5;
+	rsmsT.adc.input_range = ZT1V25;
 
 	ADS_init(&rsmsT.adc);
 }
@@ -116,7 +119,7 @@ void RSMS_T_measureData() {
 
 void RSMS_T_logData() {
 	for (rsmsT.i = 0; rsmsT.i < RSMS_T_n_sensors; rsmsT.i++) {
-		Logger_logData(rsmsT.message[rsmsT.i], 4, rsmsT.currentTime[rsmsT.i], rsmsT.currentData[rsmsT.i]);
+		Logger_logData(rsmsT.message[rsmsT.i], 3, rsmsT.currentTime[rsmsT.i], rsmsT.currentTemp[rsmsT.i]);
 	}
 }
 
@@ -132,8 +135,11 @@ void RSMS_T_printData() {
 void RSMS_T_calcPoly() {
 	for (rsmsT.i = 0; rsmsT.i < RSMS_T_n_sensors; rsmsT.i++) {
 		rsmsT.currentTemp[rsmsT.i] = (uint16_t) (100
-				* (273.15 + rsmsT.polyCoef[rsmsT.i][0] + rsmsT.polyCoef[rsmsT.i][1] * rsmsT.currentData[rsmsT.i]
-						+ rsmsT.polyCoef[rsmsT.i][2] * rsmsT.currentData[rsmsT.i] * rsmsT.currentData[rsmsT.i]));
+//				* (273.15 + rsmsT.polyCoef[rsmsT.i][0] + rsmsT.polyCoef[rsmsT.i][1] * rsmsT.currentData[rsmsT.i]
+				* (273.15
+						+ (rsmsT.polyCoef[rsmsT.i][0] + rsmsT.polyCoef[rsmsT.i][1] * rsmsT.currentData[rsmsT.i]
+								+ rsmsT.polyCoef[rsmsT.i][2] * rsmsT.currentData[rsmsT.i] * rsmsT.currentData[rsmsT.i])
+								/ 2));
 	}
 }
 

@@ -33,6 +33,7 @@ typedef enum {
 typedef enum {
 	SYSTEM_OK = 0,
 	VAS_OK = VAS << 5, // 32
+	VAS_GP_NO_POWER,
 	RSMS_OK = RSMS << 5, // 64
 	RSMS_SD_FAULT,
 	FSMS_OK = FSMS << 5, // 96
@@ -69,6 +70,33 @@ typedef enum {
 } DATA_STATUS;
 
 typedef enum {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	SYSTEM_NULL_DATA = 0,
 	SYSTEM_STATUS,
 	MCU,
