@@ -30,10 +30,15 @@ typedef struct {
 
 IFC_DataHandling ifcDataHandling;
 
+void IFC_DH_initSysBus(IFC_PeripheralStruct* ifc_struct) {
+#ifdef __STM32_CAN_PERIPHERAL
+	ifcDataHandling.sysBus = CAN_init(ifc_struct->busSys, IFC);
+#endif
+}
+
 void IFC_DH_init(IFC_PeripheralStruct *ifc_struct) {
 #ifdef __STM32_CAN_PERIPHERAL
 	ifcDataHandling.gseBus = CAN_init(ifc_struct->busGSE, IFC);
-	ifcDataHandling.sysBus = CAN_init(ifc_struct->busSys, IFC);
 #endif
 
 	ifcDataHandling.transitionMessageSys.header.targetMCU = MAX_MCU;
@@ -44,13 +49,21 @@ void IFC_DH_init(IFC_PeripheralStruct *ifc_struct) {
 }
 
 // State Machine ===========================================================
-void IFC_DH_sendTransition(STATE_ID state) {
+void IFC_DH_sendSingleTransition(STATE_ID state) {
 	ifcDataHandling.transitionMessageSys.header.timeStamp = HYOS_GetTick();
 	ifcDataHandling.transitionMessageSys.state = state;
 
 #ifdef __STM32_CAN_PERIPHERAL
 	CANI_sendTransition(ifcDataHandling.sysBus, &ifcDataHandling.transitionMessageSys);
 #endif
+}
+
+void IFC_DH_sendTransition(STATE_ID state) {
+	IFC_DH_sendSingleTransition(state);
+	HAL_Delay(500);
+	IFC_DH_sendSingleTransition(state);
+	HAL_Delay(500);
+	IFC_DH_sendSingleTransition(state);
 }
 
 // Sys Handling ============================================================
@@ -67,6 +80,7 @@ void IFC_DH_reactOnSingleRequest(CANP_MessageHeader *header, DATA_ID dataID) {
 void IFC_DH_reactOnRequest() {
 	IFC_DH_reactOnSingleRequest(&ifcDataHandling.reqDataMessageGSE.header, ifcDataHandling.reqDataMessageGSE.dataID1);
 	ifcDataHandling.dataMessageGSE.data1 = ifcDataHandling.dataGSE;
+
 	IFC_DH_reactOnSingleRequest(&ifcDataHandling.reqDataMessageGSE.header, ifcDataHandling.reqDataMessageGSE.dataID2);
 	ifcDataHandling.dataMessageGSE.data2 = ifcDataHandling.dataGSE;
 

@@ -76,6 +76,7 @@ void ifc_init_DATA_FIELD(STATE_ID number) {
 
 // IDLE ====================================================================
 void ifc_IDLE_entry() {
+	IFC_DH_initSysBus(ifc_struct);
 	IFC_DH_sendTransition(IDLE);
 }
 
