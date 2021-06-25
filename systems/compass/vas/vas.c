@@ -15,6 +15,7 @@ void vas_IDLE_entry() {
 }
 
 void vas_IDLE_while() {
+#ifdef __STM32_TIM_PERIPHERAL
 	if (TIMER_itsTime(&vas_struct->statusTim)) {
 		VAS_BOARD_sendStatus();
 	}
@@ -24,6 +25,7 @@ void vas_IDLE_while() {
 			VAS_shutdownGP();
 		}
 	}
+#endif
 }
 
 void vas_IDLE_exit() {
@@ -36,6 +38,7 @@ void vas_FUELING_entry() {
 }
 
 void vas_FUELING_while() {
+#ifdef __STM32_TIM_PERIPHERAL
 	if (TIMER_itsTime(&vas_struct->statusTim)) {
 		VAS_BOARD_sendStatus();
 	}
@@ -44,6 +47,7 @@ void vas_FUELING_while() {
 			VAS_shutdownGP();
 		}
 	}
+#endif
 }
 
 void vas_FUELING_exit() {
@@ -60,6 +64,7 @@ void vas_RDY_SET_entry() {
 }
 
 void vas_RDY_SET_while() {
+#ifdef __STM32_TIM_PERIPHERAL
 	if (TIMER_itsTime(&vas_struct->statusTim)) {
 		VAS_BOARD_sendStatus();
 	}
@@ -71,6 +76,7 @@ void vas_RDY_SET_while() {
 			VAS_startGPRecording();
 		}
 	}
+#endif
 }
 
 void vas_RDY_SET_exit() {
@@ -83,6 +89,7 @@ void vas_FLIGHT_entry() {
 }
 
 void vas_FLIGHT_while() {
+#ifdef __STM32_TIM_PERIPHERAL
 	if (TIMER_itsTime(&vas_struct->statusTim)) {
 		VAS_BOARD_sendStatus();
 	}
@@ -94,6 +101,7 @@ void vas_FLIGHT_while() {
 			VAS_startGPRecording();
 		}
 	}
+#endif
 }
 
 void vas_FLIGHT_exit() {
@@ -108,9 +116,11 @@ void vas_LANDED_entry() {
 }
 
 void vas_LANDED_while() {
+#ifdef __STM32_TIM_PERIPHERAL
 	if (TIMER_itsTime(&vas_struct->statusTim)) {
 		VAS_BOARD_sendStatus();
 	}
+#endif
 }
 
 void vas_LANDED_exit() {

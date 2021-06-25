@@ -81,10 +81,21 @@ void ifc_IDLE_entry() {
 }
 
 void ifc_IDLE_while() {
+#ifdef __STM32_TIM_PERIPHERAL
 	if (TIMER_itsTime(&ifc_struct->statusTim)) {
 		IFC_BOARD_logStatus();
 		HAL_GPIO_TogglePin(ifc_struct->LD1.port, ifc_struct->LD1.pin);
 	}
+#endif
+//	uint32_t time = 3000;
+//	IFC_DH_sendTransition(IDLE);
+//	HAL_Delay(time);
+//	IFC_DH_sendTransition(FUELING);
+//	HAL_Delay(time);
+//	IFC_DH_sendTransition(RDY_SET);
+//	HAL_Delay(time);
+//	IFC_DH_sendTransition(FLIGHT);
+//	HAL_Delay(time);
 }
 
 void ifc_IDLE_exit() {
@@ -96,9 +107,11 @@ void ifc_FUELING_entry() {
 }
 
 void ifc_FUELING_while() {
+#ifdef __STM32_TIM_PERIPHERAL
 	if (TIMER_itsTime(&ifc_struct->statusTim)) {
 		IFC_BOARD_logStatus();
 	}
+#endif
 }
 
 void ifc_FUELING_exit() {
@@ -110,9 +123,11 @@ void ifc_RDY_SET_entry() {
 }
 
 void ifc_RDY_SET_while() {
+#ifdef __STM32_TIM_PERIPHERAL
 	if (TIMER_itsTime(&ifc_struct->statusTim)) {
 		IFC_BOARD_logStatus();
 	}
+#endif
 }
 
 void ifc_RDY_SET_exit() {
@@ -124,9 +139,11 @@ void ifc_FLIGHT_entry() {
 }
 
 void ifc_FLIGHT_while() {
+#ifdef __STM32_TIM_PERIPHERAL
 	if (TIMER_itsTime(&ifc_struct->statusTim)) {
 		IFC_BOARD_logStatus();
 	}
+#endif
 }
 
 void ifc_FLIGHT_exit() {
@@ -138,9 +155,11 @@ void ifc_LANDED_entry() {
 }
 
 void ifc_LANDED_while() {
+#ifdef __STM32_TIM_PERIPHERAL
 	if (TIMER_itsTime(&ifc_struct->statusTim)) {
 		IFC_BOARD_logStatus();
 	}
+#endif
 }
 
 void ifc_LANDED_exit() {

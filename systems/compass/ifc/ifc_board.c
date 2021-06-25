@@ -27,10 +27,10 @@ void IFC_BOARD_initUsart() {
 void IFC_BOARD_initSDLogging() {
 #ifdef __STM32_SDIO_PERIPHERAL
 	FRESULT res = SDFH_init();
-	Logger_init(10);
+	Logger_init(480);
 
 	if (res != FR_OK) {
-		ifcBoard.mcuStatus = RSMS_SD_FAULT;
+		ifcBoard.mcuStatus = IFC_SD_FAULT;
 	}
 #endif
 }
@@ -51,6 +51,7 @@ void IFC_BOARD_initTim() {
 
 void IFC_BOARD_init(IFC_PeripheralStruct *ifc_PeripheralStruct) {
 	ifc_struct = ifc_PeripheralStruct;
+	ifcBoard.mcuStatus = IFC_OK;
 
 //	IFC_BOARD_initUsart(ifc_PeripheralStruct);
 	MAP_init();

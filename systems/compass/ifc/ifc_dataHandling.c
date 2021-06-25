@@ -104,6 +104,9 @@ void IFC_DH_canHandle(CANBus *bus) {
 		break;
 	case REQUEST_DATA: // From GSE
 		CANI_interpretRequestDataMessage(ifcDataHandling.busIR, &ifcDataHandling.reqDataMessageGSE);
+		if(ifcDataHandling.reqDataMessageGSE.dataID1 == IFC_STATUS){
+			uint8_t test = 1;
+		}
 		IFC_DH_reactOnRequest();
 		break;
 	case TRANSITION: // From GSE
