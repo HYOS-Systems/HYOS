@@ -6,4 +6,4 @@
  */
 #pragma once
 
-#include "systems/hyend_os_systems.h"
+#include "hyendOS/hyend_os.h"
