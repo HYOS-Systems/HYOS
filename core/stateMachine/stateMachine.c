@@ -63,7 +63,7 @@ uint8_t isStateHigher(STATE_ID stateID) {
 }
 
 void stateTransition(STATE_ID stateID) {
-//	if (isStateHigher(stateID)) {
+//	if (isStateHigher(stateID)) { // TODO Evaluate if check of current state is nice...
 	microcontroller.state->tasks.exit();
 	microcontroller.state = getMCState(stateID);
 	microcontroller.state->tasks.entry();

@@ -19,6 +19,13 @@ typedef enum {
 	IFC = 5,
 	GSE = 6,
 	MAX_MCU = 7 // 3 bit
+	/*
+	 * PCDU Switch Board
+	 * PCDU Converter Board 1/2
+	 * RSMS Lower/Upper
+	 * VAS Lower/Upper
+	 * Maxis Messystem
+	 */
 } MCU_ID;
 
 typedef enum {
@@ -70,33 +77,6 @@ typedef enum {
 } DATA_STATUS;
 
 typedef enum {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	SYSTEM_NULL_DATA = 0,
 	SYSTEM_STATUS,
 	MCU,
