@@ -5,7 +5,7 @@
  *      Author: Bayram
  */
 
-#include "peripherals/timer/timer.h"
+#include <system/timer/timer.h>
 #ifdef _TIMER_H
 
 uint8_t TIMER_itsTime(Timer *timer) {
